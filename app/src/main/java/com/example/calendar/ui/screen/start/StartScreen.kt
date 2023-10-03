@@ -20,13 +20,19 @@ import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.calendar.R
 
+val column = 6
+val row = 7
+
 @Composable
 fun StartScreen(navController: NavController, viewModel: StartViewModel) {
+    val color = Color.White
+
     Box(modifier = with(Modifier) {
         fillMaxSize().paint(
             painterResource(id = R.drawable.atmosphere_gradient),
@@ -36,14 +42,13 @@ fun StartScreen(navController: NavController, viewModel: StartViewModel) {
         Column {
 
             Spacer(modifier = Modifier.height(15.dp))
-            
+
             Row(
                 modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
             ) {
-                val color = Color.White
                 val modifier = Modifier.weight(1F)
 
-                IconButton(onClick = { }, modifier = modifier) {
+                IconButton(onClick = { viewModel.back() }, modifier = modifier) {
                     Icon(
                         imageVector = Icons.Filled.KeyboardArrowLeft,
                         contentDescription = "Back",
@@ -51,15 +56,96 @@ fun StartScreen(navController: NavController, viewModel: StartViewModel) {
                     )
                 }
 
-                Text(text = "September", fontSize = 20.sp, color = color, modifier = modifier)
+                Text(
+                    text = viewModel.nameMonth.value + " " + viewModel.year.value,
+                    fontSize = 24.sp,
+                    color = color,
+                    modifier = modifier,
+                    textAlign = TextAlign.Center
+                )
 
-                IconButton(onClick = { }) {
+                IconButton(onClick = { viewModel.next() }, modifier = modifier) {
                     Icon(
                         imageVector = Icons.Filled.KeyboardArrowRight,
                         contentDescription = "Next",
-                        tint = color,
-                        modifier = modifier
+                        tint = color
                     )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(25.dp))
+
+            Row(modifier = Modifier.fillMaxWidth()) {
+                viewModel.calendar.daysWeek.forEach { text ->
+
+                    Text(
+                        text = text,
+                        fontSize = 20.sp,
+                        color = color,
+                        modifier = Modifier.weight(1F),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(30.dp))
+
+            var count = -(6 - viewModel.pointer.value)
+
+            while (count < viewModel.month.value.days) {
+                var newCount = 0
+
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    viewModel.calendar.daysWeek.forEach { day ->
+
+                        val days = viewModel.month.value.days
+                        val dayNumber = viewModel.calendar.daysWeek.indexOf(day)
+
+                        if (count > 0 && count <= days) { // 0 < count < days
+                            if (count + dayNumber <= days) {
+                                Text(
+                                    text = (count + 7 - (7 - dayNumber)).toString(),
+                                    fontSize = 20.sp,
+                                    color = color,
+                                    modifier = Modifier.weight(1F),
+                                    textAlign = TextAlign.Center
+                                )
+                                newCount += 1
+                            } else {
+                                Text(
+                                    text = (dayNumber - newCount + 1).toString(),
+                                    fontSize = 20.sp,
+                                    color = Color.LightGray,
+                                    modifier = Modifier.weight(1F),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                            viewModel.pointerNextMonth.value = 7 - newCount
+                        } else if (count < 0 && count != -6) { // count < 0
+                            if (viewModel.preMonthStartDays + dayNumber <= viewModel.preMonthDays) {
+                                Text(
+                                    text = (viewModel.preMonthStartDays + dayNumber).toString(),
+                                    fontSize = 20.sp,
+                                    color = Color.LightGray,
+                                    modifier = Modifier.weight(1F),
+                                    textAlign = TextAlign.Center
+                                )
+                            } else {
+                                Text(
+                                    text = (count + 7 - (7 - dayNumber)).toString(),
+                                    fontSize = 20.sp,
+                                    color = color,
+                                    modifier = Modifier.weight(1F),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
+                    }
+                    count += 7
+                }
+
+                if (count != 1) {
+                    Spacer(modifier = Modifier.height(50.dp))
                 }
             }
         }
