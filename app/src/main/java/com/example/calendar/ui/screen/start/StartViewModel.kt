@@ -26,22 +26,28 @@ class StartViewModel @Inject constructor() : ViewModel() {
     var preMonthStartDays = preMonthDays - (6 - pointer.value)
 
     fun next() {
-        pointer.value = pointerNextMonth.value
-
         if (monthIndex == 11) {
             year.value = (year.value.toInt() + 1).toString()
             changeMonth(-11)
         } else {
             changeMonth(1)
         }
+
+        pointer.value = pointerNextMonth.value
+        preMonthStartDays = preMonthDays - (6 - pointer.value)
     }
 
     fun back() {
         if (monthIndex == 0) {
+            year.value = (year.value.toInt() - 1).toString()
             changeMonth(11)
         } else {
             changeMonth(-1)
         }
+
+        val term = if (pointer.value + month.value.days > 35) 42 else 35
+        pointer.value =  7 - (term - month.value.days - pointer.value)
+        preMonthStartDays = preMonthDays - (6 - pointer.value)
     }
 
     private fun changeMonth(index: Int) {
@@ -55,8 +61,6 @@ class StartViewModel @Inject constructor() : ViewModel() {
         } else {
             preMonthDays = selectMonth(year = year.value, index = monthIndex - 1).days
         }
-
-        preMonthStartDays = preMonthDays - (6 - pointer.value)
     }
     //monthIndex
     //pointer
