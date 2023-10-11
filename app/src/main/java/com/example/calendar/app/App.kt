@@ -11,6 +11,8 @@ import dagger.hilt.android.HiltAndroidApp
 
 val imageBackground = R.drawable.atmosphere_gradient
 
+val languages = Languages.English()
+
 @HiltAndroidApp
 class App: Application() {
 }

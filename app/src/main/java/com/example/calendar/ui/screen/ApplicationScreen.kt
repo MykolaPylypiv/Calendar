@@ -17,7 +17,7 @@ import com.example.calendar.ui.screen.tasks.TasksViewModel
 fun ApplicationScreen() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = NavigationTree.Add.name) {
+    NavHost(navController = navController, startDestination = NavigationTree.Start.name) {
 
         composable(NavigationTree.Start.name) {
             val startViewModel = hiltViewModel<StartViewModel>()

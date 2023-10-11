@@ -1,7 +1,6 @@
 package com.example.calendar.ui.screen.tasks
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,63 +14,96 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.calendar.app.imageBackground
+import com.example.calendar.app.languages
 import com.example.calendar.navigation.NavigationTree
 
 @Composable
 fun TasksScreen(navController: NavController, viewModel: TasksViewModel) {
-    Column(
+    val dp = 12.dp
+
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color.White.copy(0.2F)),
+            .background(color = Color.White.copy(0.2F))
     ) {
-        TopBodyLayer(navController = navController)
+        item {
+            Spacer(modifier = Modifier.height(8.dp))
 
-        Spacer(modifier = Modifier.weight(0.04F))
+            TopBodyLayer(navController = navController)
 
-        LazyColumn(modifier = Modifier.weight(1F)) {
-            item { TaskItem("Зробити дз", "21.40") }
-
-            item { TaskItem("КК", "16.50") }
-
-            item { TaskItem("Піти в універ", "21.20") }
-
-            item { TaskItem("Написати програму", "21.30") }
-
-            item { TaskItem("Зробити дз", "21.40") }
-
-            item { TaskItem("КК", "16.50") }
-
-            item { TaskItem("Піти в універ", "21.20") }
-
-            item { TaskItem("Написати програму", "21.30") }
+            Spacer(modifier = Modifier.height(8.dp))
         }
 
-        AddButton(navController = navController)
+        item {
+            Spacer(modifier = Modifier.height(dp))
 
-        Spacer(modifier = Modifier.height(8.dp))
+            TaskItem("Зробити дз", "21:40")
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(dp))
+
+            TaskItem("КК", "16:50")
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(dp))
+
+            TaskItem("Піти в універ", "21:20")
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(dp))
+
+            TaskItem("Написати програму", "21:30")
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(dp))
+
+            TaskItem("Зробити дз", "21:40")
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(dp))
+
+            TaskItem("КК", "16:50")
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(dp))
+
+            TaskItem("Піти в універ", "21:20")
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(dp))
+
+            TaskItem("Написати програму", "21:30")
+        }
     }
 }
 
 @Composable
 fun TopBodyLayer(navController: NavController) {
-    Row(horizontalArrangement = Arrangement.Center) {
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier.background(Color.Transparent)
+    ) {
         IconButton(onClick = { navController.navigate(NavigationTree.Start.name) }) {
             Icon(
                 imageVector = Icons.Filled.KeyboardArrowLeft,
@@ -84,7 +116,7 @@ fun TopBodyLayer(navController: NavController) {
         }
 
         Text(
-            text = "Here are your tasks for the day",
+            text = languages.taskTextTopBodyLayer,
             color = Color.Black,
             modifier = Modifier.padding(top = 16.dp),
             fontSize = 22.sp
@@ -95,54 +127,44 @@ fun TopBodyLayer(navController: NavController) {
 @Composable
 fun TaskItem(task: String, time: String) {
 
-    Column(
+    Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
+            .height(86.dp)
+            .padding(start = 16.dp, end = 16.dp)
             .clip(CircleShape)
-            .border(2.dp, Color.DarkGray, CircleShape)
-            .background(Color.Transparent)
-            .height(64.dp),
-        verticalArrangement = Arrangement.Center
+            .background(Color.White.copy(0.2F)), verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = task,
-            fontSize = 20.sp,
-            color = Color.DarkGray,
-            modifier = Modifier
-                .weight(1F)
-                .fillMaxWidth(),
-            textAlign = TextAlign.Center
-        )
+        Spacer(modifier = Modifier.width(28.dp))
 
-        Text(
-            text = time,
-            fontSize = 20.sp,
-            color = Color.DarkGray,
-            modifier = Modifier
-                .weight(1F)
-                .fillMaxWidth(),
-            textAlign = TextAlign.Center
-        )
-    }
-}
-
-@Composable
-fun AddButton(navController: NavController) {
-    Row {
-        Spacer(modifier = Modifier.weight(1F))
-
-        IconButton(
-            onClick = { navController.navigate(NavigationTree.Add.name) },
-            modifier = Modifier
-                .clip(CircleShape)
-                .border(2.dp, Color.DarkGray, CircleShape)
-                .size(64.dp),
+        Column(
+            modifier = Modifier.weight(1F), verticalArrangement = Arrangement.Center
         ) {
+            Spacer(modifier = Modifier.height(3.dp))
+
+            Text(
+                text = task,
+                fontSize = 20.sp,
+                color = Color.Black,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Start
+            )
+
+            Spacer(modifier = Modifier.height(3.dp))
+
+            Text(
+                text = time,
+                fontSize = 20.sp,
+                color = Color.Black,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Start
+            )
+        }
+
+        IconButton(onClick = { /*TODO*/ }) {
             Icon(
-                imageVector = Icons.Filled.Add,
-                contentDescription = "Add",
-                modifier = Modifier.size(32.dp)
+                imageVector = Icons.Outlined.Delete,
+                contentDescription = "Delete",
+                tint = Color.Black
             )
         }
 

@@ -1,16 +1,24 @@
 package com.example.calendar.ui.screen.start
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -33,11 +41,8 @@ import com.example.calendar.navigation.NavigationTree
 
 @Composable
 fun StartScreen(navController: NavController, viewModel: StartViewModel) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
+    Column(modifier = Modifier.fillMaxSize()) {
 
-    ) {
         Spacer(modifier = Modifier.height(15.dp))
 
         StartTopBody(viewModel = viewModel)
@@ -49,6 +54,12 @@ fun StartScreen(navController: NavController, viewModel: StartViewModel) {
         Spacer(modifier = Modifier.height(30.dp))
 
         TableMonth(viewModel = viewModel, navController = navController)
+
+        Spacer(modifier = Modifier.weight(1F))
+
+        AddButton(navController = navController)
+
+        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
@@ -58,9 +69,7 @@ fun StartScreen(navController: NavController, viewModel: StartViewModel) {
 fun StartTopBody(viewModel: StartViewModel) {
     val color = Color.White
 
-    Row(
-        modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
-    ) {
+    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         val modifier = Modifier.weight(1F)
 
         IconButton(onClick = { viewModel.back() }, modifier = modifier) {
@@ -111,7 +120,7 @@ fun WeekdayRow(viewModel: StartViewModel) {
 fun TableMonth(viewModel: StartViewModel, navController: NavController) {
     var count = -(6 - viewModel.pointer.value)
 
-    while (count < viewModel.month.value.days) {
+    while (count < 7 - viewModel.pointer.value + viewModel.month.value.days) {
         var newCount = 0
 
         Row(
@@ -123,7 +132,7 @@ fun TableMonth(viewModel: StartViewModel, navController: NavController) {
                 val dayNumber = viewModel.calendar.daysWeek.indexOf(day)
 
                 var modifier =
-                    if (viewModel.calendar.day.toInt() == count + 7 - (7 - dayNumber) && viewModel.monthIndex == viewModel.calendar.monthNumber - 1) {
+                    if (viewModel.calendar.day.toInt() == count + 7 - (7 - dayNumber) && viewModel.monthIndex == viewModel.calendar.monthNumber - 1 && viewModel.calendar.year == viewModel.year.value) {
                         Modifier
                             .weight(1F)
                             .height(60.dp)
@@ -151,7 +160,7 @@ fun TableMonth(viewModel: StartViewModel, navController: NavController) {
                     }
 
                     viewModel.pointerNextMonth.value = 7 - newCount
-                } else if (count < 0 && count != -6) { // count < 0
+                } else if (count <= 0 && count != -6) { // count < 0
 
                     if (viewModel.preMonthStartDays + dayNumber <= viewModel.preMonthDays) {
                         text.value = (viewModel.preMonthStartDays + dayNumber).toString()
@@ -177,5 +186,30 @@ fun TableMonth(viewModel: StartViewModel, navController: NavController) {
             }
         }
         count += 7
+    }
+}
+
+@Composable
+fun AddButton(navController: NavController) {
+    Row {
+        Spacer(modifier = Modifier.weight(1F))
+
+        IconButton(
+            onClick = { navController.navigate(NavigationTree.Add.name) },
+            modifier = Modifier
+                .clip(CircleShape)
+                .background(Color.Gray.copy(0.5f))
+                .border(2.dp, Color.Gray.copy(0.2F), CircleShape)
+                .size(64.dp),
+        ) {
+            Icon(
+                tint = Color.White,
+                imageVector = Icons.Filled.Add,
+                contentDescription = "Add",
+                modifier = Modifier.size(32.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.width(16.dp))
     }
 }

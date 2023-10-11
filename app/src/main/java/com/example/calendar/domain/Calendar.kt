@@ -7,7 +7,7 @@ import java.util.Date
 import javax.inject.Inject
 
 class Calendar @Inject constructor() {
-    val daysWeek = listOf("Mn", "Ts", "Wd", "Th", "Fr", "St", "Sn")
+    val daysWeek = listOf("Mo", "Tu", "We", "Th", "Fr", "Sa", "Su")
 
     val listOfMonth = listOf(
         Month(name = "January", days = 31),

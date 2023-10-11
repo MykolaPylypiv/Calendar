@@ -26,7 +26,11 @@ class StartViewModel @Inject constructor(val calendar: Calendar) : ViewModel() {
         if (monthIndex == 11) {
             year.value = (year.value.toInt() + 1).toString()
             changeMonth(-11)
-        } else changeMonth(1)
+            preMonthDays = selectMonth(year = year.value, index = 11).days
+        } else {
+            changeMonth(1)
+            preMonthDays = selectMonth(year = year.value, index = monthIndex - 1).days
+        }
 
         pointer.value = pointerNextMonth.value
         preMonthStartDays = preMonthDays - (6 - pointer.value)
@@ -36,11 +40,15 @@ class StartViewModel @Inject constructor(val calendar: Calendar) : ViewModel() {
         if (monthIndex == 0) {
             year.value = (year.value.toInt() - 1).toString()
             changeMonth(11)
-        } else changeMonth(-1)
+            preMonthDays = selectMonth(year = year.value, index = 0).days
+        } else {
+            changeMonth(-1)
+            preMonthDays = selectMonth(year = year.value, index = monthIndex - 1).days
+        }
 
         val term = if (pointer.value + month.value.days > 35) 42 else 35
-        pointer.value =  7 - (term - month.value.days - pointer.value)
-        preMonthStartDays = preMonthDays - (6 - pointer.value)
+        pointer.value = - (term - pointer.value - month.value.days - 7)
+        preMonthStartDays = preMonthDays - 6 + pointer.value
     }
 
     private fun changeMonth(index: Int) {

@@ -34,7 +34,7 @@ fun CalendarTheme(
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val backgroundStatusBarColor = Color(0xff2b4f73)
+    val backgroundStatusBarColor = Color(0xff23405e).copy(0.85F)
 
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
