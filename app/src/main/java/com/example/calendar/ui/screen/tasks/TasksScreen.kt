@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.calendar.app.languages
+import com.example.calendar.domain.model.Task
 import com.example.calendar.navigation.NavigationTree
 
 @Composable
@@ -48,52 +49,12 @@ fun TasksScreen(navController: NavController, viewModel: TasksViewModel) {
             Spacer(modifier = Modifier.height(8.dp))
         }
 
-        item {
-            Spacer(modifier = Modifier.height(dp))
+        viewModel.tasks.value.forEach { task ->
+            item {
+                Spacer(modifier = Modifier.height(dp))
 
-            TaskItem("Зробити дз", "21:40")
-        }
-
-        item {
-            Spacer(modifier = Modifier.height(dp))
-
-            TaskItem("КК", "16:50")
-        }
-
-        item {
-            Spacer(modifier = Modifier.height(dp))
-
-            TaskItem("Піти в універ", "21:20")
-        }
-
-        item {
-            Spacer(modifier = Modifier.height(dp))
-
-            TaskItem("Написати програму", "21:30")
-        }
-
-        item {
-            Spacer(modifier = Modifier.height(dp))
-
-            TaskItem("Зробити дз", "21:40")
-        }
-
-        item {
-            Spacer(modifier = Modifier.height(dp))
-
-            TaskItem("КК", "16:50")
-        }
-
-        item {
-            Spacer(modifier = Modifier.height(dp))
-
-            TaskItem("Піти в універ", "21:20")
-        }
-
-        item {
-            Spacer(modifier = Modifier.height(dp))
-
-            TaskItem("Написати програму", "21:30")
+                TaskItem(task = task, viewModel = viewModel)
+            }
         }
     }
 }
@@ -125,7 +86,7 @@ fun TopBodyLayer(navController: NavController) {
 }
 
 @Composable
-fun TaskItem(task: String, time: String) {
+fun TaskItem(task: Task, viewModel: TasksViewModel) {
 
     Row(
         modifier = Modifier
@@ -142,7 +103,7 @@ fun TaskItem(task: String, time: String) {
             Spacer(modifier = Modifier.height(3.dp))
 
             Text(
-                text = task,
+                text = task.name,
                 fontSize = 20.sp,
                 color = Color.Black,
                 modifier = Modifier.fillMaxWidth(),
@@ -152,7 +113,7 @@ fun TaskItem(task: String, time: String) {
             Spacer(modifier = Modifier.height(3.dp))
 
             Text(
-                text = time,
+                text = task.time,
                 fontSize = 20.sp,
                 color = Color.Black,
                 modifier = Modifier.fillMaxWidth(),
@@ -160,7 +121,7 @@ fun TaskItem(task: String, time: String) {
             )
         }
 
-        IconButton(onClick = { /*TODO*/ }) {
+        IconButton(onClick = { viewModel.deleteTask(task) }) {
             Icon(
                 imageVector = Icons.Outlined.Delete,
                 contentDescription = "Delete",

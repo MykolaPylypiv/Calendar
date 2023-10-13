@@ -2,7 +2,6 @@ package com.example.calendar.ui.screen.start
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,9 +15,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -28,15 +24,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.calendar.app.imageBackground
 import com.example.calendar.navigation.NavigationTree
 
 @Composable
@@ -62,8 +54,6 @@ fun StartScreen(navController: NavController, viewModel: StartViewModel) {
         Spacer(modifier = Modifier.height(8.dp))
     }
 }
-
-//      Edit back fun if count == - 7 Error
 
 @Composable
 fun StartTopBody(viewModel: StartViewModel) {
@@ -131,12 +121,15 @@ fun TableMonth(viewModel: StartViewModel, navController: NavController) {
                 val days = viewModel.month.value.days
                 val dayNumber = viewModel.calendar.daysWeek.indexOf(day)
 
+                val text = mutableStateOf("")
+                val textColor = mutableStateOf(Color.White)
+
                 var modifier =
-                    if (viewModel.calendar.day.toInt() == count + 7 - (7 - dayNumber) && viewModel.monthIndex == viewModel.calendar.monthNumber - 1 && viewModel.calendar.year == viewModel.year.value) {
+                    if (viewModel.isToday(count = count, day = day)) {
                         Modifier
                             .weight(1F)
-                            .height(60.dp)
                             .clip(CircleShape)
+                            .height(58.dp)
                             .background(Color(0xffff984f))
                     } else {
                         Modifier
@@ -144,14 +137,10 @@ fun TableMonth(viewModel: StartViewModel, navController: NavController) {
                             .height(60.dp)
                     }
 
-                val text = mutableStateOf("")
-
-                val textColor = mutableStateOf(Color.White)
-
                 if (count in 1..days) { // 0 < count < days
 
                     if (count + dayNumber <= days) {
-                        text.value = (count + 7 - (7 - dayNumber)).toString()
+                        text.value = (count + dayNumber).toString()
                         textColor.value = Color.White
                         newCount += 1
                     } else {

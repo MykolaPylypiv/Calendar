@@ -6,13 +6,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.room.Insert
 import com.example.calendar.R
+import com.example.calendar.data.db.AppDatabase
 import dagger.hilt.android.HiltAndroidApp
-
-val imageBackground = R.drawable.atmosphere_gradient
+import javax.inject.Inject
 
 val languages = Languages.English()
 
+const val DATABASE_NAME = "database"
+
 @HiltAndroidApp
-class App: Application() {
-}
+class App: Application()

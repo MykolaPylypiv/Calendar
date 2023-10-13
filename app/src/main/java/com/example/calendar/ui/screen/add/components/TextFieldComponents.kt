@@ -1,4 +1,4 @@
-package com.example.calendar.ui.screen.add
+package com.example.calendar.ui.screen.add.components
 
 import android.content.Context
 import android.widget.Toast
@@ -24,14 +24,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.example.calendar.app.languages
+import com.example.calendar.ui.screen.add.AddViewModel
+import com.example.calendar.ui.screen.add.borderColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EventTextField(context: Context) {
+fun EventTextField(context: Context, viewModel: AddViewModel) {
     var task by remember { mutableStateOf(TextFieldValue("")) }
     val maxChar = 20
 
-    OutlinedTextField(shape = CircleShape,
+    OutlinedTextField(
+        shape = CircleShape,
         value = task,
         leadingIcon = {
             Icon(
@@ -41,9 +44,13 @@ fun EventTextField(context: Context) {
             )
         },
         onValueChange = {
-            if (it.text.length <= maxChar) task = it else Toast.makeText(
+            if (it.text.length <= maxChar) {
+                task = it
+                viewModel.newTask.name = it.text
+            } else Toast.makeText(
                 context, languages.toastNameContainTwentyCharacters, Toast.LENGTH_SHORT
             ).show()
+
         },
         label = { Text(text = languages.enterYourEvent) },
         placeholder = { Text(text = languages.enterYourEvent) },
@@ -63,7 +70,7 @@ fun EventTextField(context: Context) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DescriptionTextField(context: Context) {
+fun DescriptionTextField(context: Context, viewModel: AddViewModel) {
     var description by remember { mutableStateOf(TextFieldValue("")) }
     val maxChar = 130
 
@@ -78,9 +85,13 @@ fun DescriptionTextField(context: Context) {
             )
         },
         onValueChange = {
-            if (it.text.length <= maxChar) description = it else Toast.makeText(
+            if (it.text.length <= maxChar) {
+                description = it
+                viewModel.newTask.description = it.text
+            } else Toast.makeText(
                 context, languages.toastNameContainHundredTwentyCharacters, Toast.LENGTH_SHORT
             ).show()
+
         },
         label = {
             Text(text = languages.enterYourDescription)

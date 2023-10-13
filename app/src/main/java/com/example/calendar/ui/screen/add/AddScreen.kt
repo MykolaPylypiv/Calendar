@@ -40,6 +40,10 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.example.calendar.app.languages
 import com.example.calendar.navigation.NavigationTree
+import com.example.calendar.ui.screen.add.components.DescriptionTextField
+import com.example.calendar.ui.screen.add.components.EventTextField
+import com.example.calendar.ui.screen.add.components.SelectDate
+import com.example.calendar.ui.screen.add.components.SelectTime
 
 val borderColor = Color.DarkGray
 
@@ -57,11 +61,11 @@ fun AddScreen(navController: NavController, viewModel: AddViewModel) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        EventTextField(context = context)
+        EventTextField(context = context, viewModel = viewModel)
 
         Spacer(modifier = Modifier.height(40.dp))
 
-        RepeatTime()
+        RepeatTime(viewModel = viewModel)
 
         Spacer(modifier = Modifier.height(35.dp))
 
@@ -73,11 +77,11 @@ fun AddScreen(navController: NavController, viewModel: AddViewModel) {
 
         Spacer(modifier = Modifier.height(35.dp))
 
-        DescriptionTextField(context = context)
+        DescriptionTextField(context = context, viewModel = viewModel)
 
         Spacer(modifier = Modifier.weight(1F))
 
-        AcceptButton(navController = navController)
+        AcceptButton(navController = navController, viewModel = viewModel)
 
         Spacer(modifier = Modifier.height(10.dp))
     }
@@ -111,8 +115,9 @@ fun TopBodyLayer(navController: NavController) {
 }
 
 @Composable
-fun RepeatTime() {
+fun RepeatTime(viewModel: AddViewModel) {
     val stateDialog = remember { mutableStateOf(false) }
+    val selectRepeat = remember { mutableStateOf(languages.oneTime) }
 
     Row(
         modifier = Modifier
@@ -142,7 +147,7 @@ fun RepeatTime() {
         Spacer(modifier = Modifier.weight(1F))
 
         Text(
-            text = languages.oneTime,
+            text = selectRepeat.value,
             modifier = Modifier
                 .height(50.dp)
                 .padding(13.dp),
@@ -168,36 +173,16 @@ fun RepeatTime() {
                     .border(2.dp, Color.Gray),
                 verticalArrangement = Arrangement.Bottom
             ) {
-                item {
-                    RepeatDialogItem(text = languages.oneTime,
-                        onClick = { stateDialog.value = false })
+                viewModel.listRepeat.forEach { text ->
+                    item {
+                        RepeatDialogItem(text = text, onClick = {
+                            selectRepeat.value = text
+                            viewModel.newTask.repeat = text
+                            stateDialog.value = false
+                        })
+                    }
                 }
 
-                item {
-                    RepeatDialogItem(text = languages.everyDay,
-                        onClick = { stateDialog.value = false })
-                }
-
-                item {
-                    RepeatDialogItem(text = languages.everyWeek,
-                        onClick = { stateDialog.value = false })
-                }
-
-                item {
-                    RepeatDialogItem(
-                        text = languages.everyTwoWeek,
-                        onClick = { stateDialog.value = false })
-                }
-
-                item {
-                    RepeatDialogItem(text = languages.everyMonth,
-                        onClick = { stateDialog.value = false })
-                }
-
-                item {
-                    RepeatDialogItem(text = languages.everyYear,
-                        onClick = { stateDialog.value = false })
-                }
             }
         }
     }
@@ -219,9 +204,12 @@ fun RepeatDialogItem(text: String, onClick: () -> Unit) {
 }
 
 @Composable
-fun AcceptButton(navController: NavController) {
+fun AcceptButton(navController: NavController, viewModel: AddViewModel) {
     TextButton(
-        onClick = { navController.navigate(NavigationTree.Start.name) },
+        onClick = {
+            navController.navigate(NavigationTree.Start.name)
+            viewModel.insert(viewModel.newTask)
+        },
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 56.dp, end = 56.dp)

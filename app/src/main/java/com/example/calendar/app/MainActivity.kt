@@ -14,15 +14,21 @@ import androidx.compose.ui.draw.paint
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.calendar.R
+import com.example.calendar.data.db.AppDatabase
 import com.example.calendar.ui.screen.ApplicationScreen
 import com.example.calendar.ui.theme.CalendarTheme
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val imageBackground = R.drawable.atmosphere_gradient
+
             Box(
                 modifier = Modifier
                     .fillMaxSize()

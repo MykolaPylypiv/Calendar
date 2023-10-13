@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StartViewModel @Inject constructor(val calendar: Calendar) : ViewModel() {
-    var monthIndex = calendar.monthNumber - 1
+    private var monthIndex = calendar.monthNumber - 1
 
     val year = mutableStateOf(calendar.year)
 
@@ -49,6 +49,12 @@ class StartViewModel @Inject constructor(val calendar: Calendar) : ViewModel() {
         val term = if (pointer.value + month.value.days > 35) 42 else 35
         pointer.value = - (term - pointer.value - month.value.days - 7)
         preMonthStartDays = preMonthDays - 6 + pointer.value
+    }
+
+    fun isToday(count: Int, day: String): Boolean {
+        return (calendar.day.toInt() == count + calendar.daysWeek.indexOf(day) &&
+                monthIndex == calendar.monthNumber - 1 &&
+                calendar.year == year.value)
     }
 
     private fun changeMonth(index: Int) {

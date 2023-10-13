@@ -25,10 +25,13 @@ class Calendar @Inject constructor() {
     )
 
     @SuppressLint("SimpleDateFormat")
-    val nowDate = SimpleDateFormat("u/dd/M/yyyy").format(Date()).split("/")
+    val nowDate = SimpleDateFormat("u/dd/M/yyyy/HH/mm").format(Date()).split("/")
 
     val dayOfWeek = nowDate[0]
     val day = nowDate[1]
     val monthNumber = nowDate[2].toInt()
     val year = nowDate[3]
+
+    val hour = nowDate[4]
+    val minute = nowDate[5]
 }
