@@ -30,12 +30,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.example.calendar.app.languages
+import com.example.calendar.app.Languages
 import com.example.calendar.ui.screen.add.AddViewModel
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun SelectTime(context: Context, viewModel: AddViewModel) {
+fun SelectTime(context: Context, viewModel: AddViewModel, languages: Languages) {
     val stateDialog = remember { mutableStateOf(false) }
     val stateHourDialog = remember { mutableStateOf(false) }
     val stateMinutesDialog = remember { mutableStateOf(false) }
@@ -111,7 +111,7 @@ fun SelectTime(context: Context, viewModel: AddViewModel) {
                         Spacer(modifier = Modifier.height(25.dp))
 
                         IconButtonUp {
-                            minute.value = if (minute.value == 55) 0 else minute.value + 5
+                            minute.value = if (minute.value >= 55) 0 else minute.value + 5
                         }
 
                         Spacer(modifier = Modifier.height(10.dp))
@@ -131,7 +131,7 @@ fun SelectTime(context: Context, viewModel: AddViewModel) {
                         Spacer(modifier = Modifier.height(10.dp))
 
                         IconButtonDown {
-                            minute.value = if (minute.value == 0) 55 else minute.value - 5
+                            minute.value = if (minute.value < 5) 55 else minute.value - 5
                         }
 
                         Spacer(modifier = Modifier.height(15.dp))
@@ -142,11 +142,11 @@ fun SelectTime(context: Context, viewModel: AddViewModel) {
 
                 Spacer(modifier = Modifier.height(25.dp))
 
-                AcceptRow {
+                AcceptRow(languages = languages, onClick = {
                     viewModel.time.value = "${hour.value}.${minute.value}"
                     viewModel.newTask.time = "${hour.value}.${minute.value}"
                     stateDialog.value = false
-                }
+                })
 
                 Spacer(modifier = Modifier.height(8.dp))
             }

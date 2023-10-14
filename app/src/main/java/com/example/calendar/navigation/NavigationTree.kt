@@ -1,5 +1,5 @@
 package com.example.calendar.navigation
 
 enum class NavigationTree {
-    Start, Tasks, Add
+    Start, Tasks, Add, Edit
 }

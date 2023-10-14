@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.calendar.app.date
 import com.example.calendar.navigation.NavigationTree
 
 @Composable
@@ -124,18 +125,17 @@ fun TableMonth(viewModel: StartViewModel, navController: NavController) {
                 val text = mutableStateOf("")
                 val textColor = mutableStateOf(Color.White)
 
-                var modifier =
-                    if (viewModel.isToday(count = count, day = day)) {
-                        Modifier
-                            .weight(1F)
-                            .clip(CircleShape)
-                            .height(58.dp)
-                            .background(Color(0xffff984f))
-                    } else {
-                        Modifier
-                            .weight(1F)
-                            .height(60.dp)
-                    }
+                var modifier = if (viewModel.isToday(count = count, day = day)) {
+                    Modifier
+                        .weight(1F)
+                        .clip(CircleShape)
+                        .height(58.dp)
+                        .background(Color(0xffff984f))
+                } else {
+                    Modifier
+                        .weight(1F)
+                        .height(60.dp)
+                }
 
                 if (count in 1..days) { // 0 < count < days
 
@@ -161,8 +161,12 @@ fun TableMonth(viewModel: StartViewModel, navController: NavController) {
                 } else modifier = Modifier.height(0.dp)
 
                 TextButton(
-                    onClick = { navController.navigate(NavigationTree.Tasks.name) },
-                    modifier = modifier
+                    onClick = {
+                        if (textColor.value == Color.White) {
+                            navController.navigate(NavigationTree.Tasks.name)
+                            date.value = viewModel.month.value.name + " " + text.value + ", " + viewModel.year.value
+                        }
+                    }, modifier = modifier
                 ) {
 
                     Text(

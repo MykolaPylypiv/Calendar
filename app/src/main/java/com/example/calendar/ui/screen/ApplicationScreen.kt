@@ -8,6 +8,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.calendar.navigation.NavigationTree
 import com.example.calendar.ui.screen.add.AddScreen
 import com.example.calendar.ui.screen.add.AddViewModel
+import com.example.calendar.ui.screen.edit.EditScreen
+import com.example.calendar.ui.screen.edit.EditViewModel
 import com.example.calendar.ui.screen.start.StartScreen
 import com.example.calendar.ui.screen.start.StartViewModel
 import com.example.calendar.ui.screen.tasks.TasksScreen
@@ -30,6 +32,10 @@ fun ApplicationScreen() {
         composable(NavigationTree.Add.name) {
             val addViewModel = hiltViewModel<AddViewModel>()
             AddScreen(viewModel = addViewModel, navController = navController)
+        }
+        composable(NavigationTree.Edit.name) {
+            val editViewModel = hiltViewModel<EditViewModel>()
+            EditScreen(viewModel = editViewModel, navController = navController)
         }
     }
 }

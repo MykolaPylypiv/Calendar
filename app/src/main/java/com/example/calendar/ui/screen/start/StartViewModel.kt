@@ -16,7 +16,7 @@ class StartViewModel @Inject constructor(val calendar: Calendar) : ViewModel() {
     val month = mutableStateOf(selectMonth(year = year.value, index = monthIndex))
     val nameMonth = mutableStateOf(month.value.name)
 
-    val pointer = mutableStateOf(calendar.day.toInt() % 7 - calendar.dayOfWeek.toInt())
+    val pointer = mutableStateOf(7 + calendar.day.toInt() % 7 - calendar.dayOfWeek.toInt())
     val pointerNextMonth = mutableStateOf(0)
 
     var preMonthDays = selectMonth(year = year.value, index = monthIndex - 1).days
@@ -42,8 +42,8 @@ class StartViewModel @Inject constructor(val calendar: Calendar) : ViewModel() {
             changeMonth(11)
             preMonthDays = selectMonth(year = year.value, index = 0).days
         } else {
-            changeMonth(-1)
             preMonthDays = selectMonth(year = year.value, index = monthIndex - 1).days
+            changeMonth(-1)
         }
 
         val term = if (pointer.value + month.value.days > 35) 42 else 35

@@ -1,8 +1,12 @@
 package com.example.calendar.app
 
+import javax.inject.Inject
+
 interface Languages {
 
     val taskTextTopBodyLayer: String
+
+    val editTextTopBodyLayer: String
 
     //Event
     val addNewEvent: String
@@ -33,6 +37,8 @@ interface Languages {
 
     val month: String
 
+    val year: String
+
     val time: String
 
     val hour: String
@@ -51,9 +57,13 @@ interface Languages {
 
     val toastNameContainHundredTwentyCharacters: String
 
-    class English : Languages {
+    val toastEnterName: String
+
+    class English @Inject constructor() : Languages {
         override val taskTextTopBodyLayer: String
-            get() = "Here are your tasks for the day"
+            get() = "Events on "
+        override val editTextTopBodyLayer: String
+            get() = "Enter new name or description"
         override val addNewEvent: String
             get() = "Add a new event"
         override val enterYourEvent: String
@@ -80,6 +90,8 @@ interface Languages {
             get() = "Day"
         override val month: String
             get() = "Month"
+        override val year: String
+            get() = "Year"
         override val time: String
             get() = "Time"
         override val hour: String
@@ -96,5 +108,7 @@ interface Languages {
             get() = "Name can contain only 20 characters"
         override val toastNameContainHundredTwentyCharacters: String
             get() = "Name can contain only 120 characters"
+        override val toastEnterName: String
+            get() = "Enter name"
     }
 }

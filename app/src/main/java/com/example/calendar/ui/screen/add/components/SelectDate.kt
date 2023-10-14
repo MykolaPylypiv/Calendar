@@ -25,18 +25,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.example.calendar.app.languages
+import com.example.calendar.app.Languages
 import com.example.calendar.ui.screen.add.AddViewModel
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun SelectDate(viewModel: AddViewModel) {
+fun SelectDate(viewModel: AddViewModel, languages: Languages) {
     val stateDialog = remember { mutableStateOf(false) }
     val stateDaysDialog = remember { mutableStateOf(false) }
     val stateMonthsDialog = remember { mutableStateOf(false) }
 
     val dayNumber = remember { mutableStateOf(viewModel.calendar.day.toInt()) }
     val month = remember { mutableStateOf(viewModel.calendar.monthNumber - 1) }
+    val year = remember { mutableStateOf(viewModel.calendar.year.toInt()) }
 
     StartRow(
         onClick = { stateDialog.value = true },
@@ -48,10 +49,9 @@ fun SelectDate(viewModel: AddViewModel) {
         Dialog(onDismissRequest = { stateDialog.value = false }) {
             Card {
                 Row(modifier = Modifier.fillMaxWidth()) {
-                    Spacer(modifier = Modifier.width(15.dp))
 
                     Column(
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.weight(0.7f),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Spacer(modifier = Modifier.height(15.dp))
@@ -93,10 +93,9 @@ fun SelectDate(viewModel: AddViewModel) {
                         IconButtonDown {
                             val daysInMonth = viewModel.selectMonth(month.value).days
 
-                            dayNumber.value =
-                                if (dayNumber.value == 1) {
-                                    daysInMonth
-                                } else dayNumber.value - 1
+                            dayNumber.value = if (dayNumber.value == 1) {
+                                daysInMonth
+                            } else dayNumber.value - 1
                         }
 
                         Spacer(modifier = Modifier.height(15.dp))
@@ -152,18 +151,70 @@ fun SelectDate(viewModel: AddViewModel) {
                         Spacer(modifier = Modifier.height(15.dp))
                     }
 
-                    Spacer(modifier = Modifier.width(15.dp))
+                    Column(
+                        modifier = Modifier.weight(0.7f),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Spacer(modifier = Modifier.height(15.dp))
+
+                        Text(
+                            text = languages.year,
+                            fontSize = 18.sp,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        Spacer(modifier = Modifier.height(25.dp))
+
+                        IconButtonUp {
+                            year.value = year.value + 1
+                        } // Зробити високосний рік
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        AnimatedContent(
+                            targetState = year.value, label = ""
+                        ) { targetCount ->
+                            Text(
+                                text = targetCount.toString(),
+                                fontSize = 24.sp,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { stateMonthsDialog.value = true },
+                                color = Color.Black,
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        IconButtonDown {
+                            val nowYear = viewModel.calendar.year.toInt()
+                            year.value = if (year.value == nowYear) nowYear else year.value - 1
+                        } // Зробити високосний рік
+
+                        Spacer(modifier = Modifier.height(15.dp))
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(25.dp))
 
-                AcceptRow {
-                    viewModel.date.value = "${dayNumber.value}.${month.value + 1}"
-                    viewModel.newTask.date = "${dayNumber.value}.${month.value + 1}"
-                    stateDialog.value = false
-                }
+                AcceptRow(languages = languages, onClick = {
+                    if (month.value + 1 < 10) viewModel.date.value =
+                        "${dayNumber.value}.0${month.value + 1}.${year.value}"
+                    else viewModel.date.value =
+                        "${dayNumber.value}.${month.value + 1}.${year.value}"
 
-                Spacer(modifier = Modifier.height(8.dp))
+                    if (dayNumber.value < 10) {
+                        viewModel.date.value = "0${viewModel.date.value}"
+                    }
+
+                    viewModel.newTask.date =
+                        "${viewModel.months[month.value].name} ${dayNumber.value}, ${year.value}"
+                    stateDialog.value = false
+                })
+
+                Spacer(modifier = Modifier.height(4.dp))
             }
         }
     }

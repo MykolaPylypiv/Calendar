@@ -1,13 +1,18 @@
 package com.example.calendar.ui.screen.add
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.calendar.app.languages
+import androidx.navigation.NavController
+import com.example.calendar.app.Languages
 import com.example.calendar.data.db.room.TasksDao
+import com.example.calendar.data.repository.TaskRepository
 import com.example.calendar.domain.Calendar
 import com.example.calendar.domain.model.Month
 import com.example.calendar.domain.model.Task
+import com.example.calendar.navigation.NavigationTree
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -15,7 +20,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddViewModel @Inject constructor(
-    val calendar: Calendar, private val tasksDao: TasksDao
+    val calendar: Calendar, val languages: Languages, private val repository: TaskRepository
 ) : ViewModel() {
 
     val hours =
@@ -34,11 +39,22 @@ class AddViewModel @Inject constructor(
 
     val months = calendar.listOfMonth
 
-    val newTask = Task()
+    val newTask = Task(
+        repeat = languages.oneTime,
+        time = "${calendar.hour}.${calendar.minute}",
+        date = "${calendar.listOfMonth[calendar.monthNumber - 1].name} ${calendar.day}, ${calendar.year}"
+    )
 
-    fun insert(task: Task) {
-        viewModelScope.launch(Dispatchers.IO) {
-            tasksDao.insert(task)
+    fun insert(task: Task, context: Context, navController: NavController) {
+        if (task.name.isEmpty()) {
+            Toast.makeText(
+                context, languages.toastEnterName, Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            navController.navigate(NavigationTree.Start.name)
+            viewModelScope.launch(Dispatchers.IO) {
+                repository.insert(task)
+            }
         }
     }
 
@@ -50,7 +66,7 @@ class AddViewModel @Inject constructor(
         } else calendar.listOfMonth[index]
     }
 
-    val date = mutableStateOf("${calendar.day}.${calendar.monthNumber}")
+    val date = mutableStateOf("${calendar.day}.${calendar.monthNumber}.${calendar.year}")
 
     val time = mutableStateOf("${calendar.hour}.${calendar.minute}")
 }

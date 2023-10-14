@@ -2,7 +2,7 @@ package com.example.calendar.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.calendar.app.DATABASE_NAME
+import com.example.calendar.app.Languages
 import com.example.calendar.data.db.AppDatabase
 import com.example.calendar.data.db.room.TasksDao
 import com.example.calendar.data.repository.TaskRepository
@@ -16,11 +16,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+    private const val DATABASE_NAME = "database"
 
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): AppDatabase =
-        Room.databaseBuilder(context, AppDatabase::class.java, "room_database").build()
+        Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME).build()
 
     @Provides
     @Singleton
@@ -32,5 +33,10 @@ object AppModule {
     @Singleton
     fun provideTaskRepository(dao: TasksDao): TaskRepository {
         return TaskRepository.Base(dao)
+    }
+
+    @Provides
+    fun provideLanguage(): Languages {
+        return Languages.English()
     }
 }

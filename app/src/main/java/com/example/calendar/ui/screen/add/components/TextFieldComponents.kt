@@ -23,13 +23,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.example.calendar.app.languages
+import com.example.calendar.app.Languages
 import com.example.calendar.ui.screen.add.AddViewModel
 import com.example.calendar.ui.screen.add.borderColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EventTextField(context: Context, viewModel: AddViewModel) {
+fun EventTextField(context: Context, viewModel: AddViewModel, languages: Languages) {
     var task by remember { mutableStateOf(TextFieldValue("")) }
     val maxChar = 20
 
@@ -70,7 +70,7 @@ fun EventTextField(context: Context, viewModel: AddViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DescriptionTextField(context: Context, viewModel: AddViewModel) {
+fun DescriptionTextField(context: Context, viewModel: AddViewModel, languages: Languages) {
     var description by remember { mutableStateOf(TextFieldValue("")) }
     val maxChar = 130
 
@@ -91,7 +91,6 @@ fun DescriptionTextField(context: Context, viewModel: AddViewModel) {
             } else Toast.makeText(
                 context, languages.toastNameContainHundredTwentyCharacters, Toast.LENGTH_SHORT
             ).show()
-
         },
         label = {
             Text(text = languages.enterYourDescription)

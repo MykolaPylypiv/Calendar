@@ -1,5 +1,6 @@
 package com.example.calendar.ui.screen.add
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -38,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
-import com.example.calendar.app.languages
+import com.example.calendar.app.Languages
 import com.example.calendar.navigation.NavigationTree
 import com.example.calendar.ui.screen.add.components.DescriptionTextField
 import com.example.calendar.ui.screen.add.components.EventTextField
@@ -50,6 +51,7 @@ val borderColor = Color.DarkGray
 @Composable
 fun AddScreen(navController: NavController, viewModel: AddViewModel) {
     val context = LocalContext.current
+    val languages = viewModel.languages
 
     Column(
         modifier = Modifier
@@ -57,40 +59,47 @@ fun AddScreen(navController: NavController, viewModel: AddViewModel) {
             .background(color = Color.White.copy(0.2F)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TopBodyLayer(navController = navController)
+        TopBodyLayer(text = languages.addNewEvent,
+            onClick = { navController.navigate(NavigationTree.Start.name) })
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        EventTextField(context = context, viewModel = viewModel)
+        EventTextField(context = context, viewModel = viewModel, languages = languages)
 
         Spacer(modifier = Modifier.height(40.dp))
 
-        RepeatTime(viewModel = viewModel)
+        RepeatTime(viewModel = viewModel, languages = languages)
 
         Spacer(modifier = Modifier.height(35.dp))
 
-        SelectDate(viewModel = viewModel)
+        SelectDate(viewModel = viewModel, languages = languages)
 
         Spacer(modifier = Modifier.height(35.dp))
 
-        SelectTime(context = context, viewModel = viewModel)
+        SelectTime(context = context, viewModel = viewModel, languages = languages)
 
         Spacer(modifier = Modifier.height(35.dp))
 
-        DescriptionTextField(context = context, viewModel = viewModel)
+        DescriptionTextField(context = context, viewModel = viewModel, languages = languages)
 
         Spacer(modifier = Modifier.weight(1F))
 
-        AcceptButton(navController = navController, viewModel = viewModel)
+        AcceptButton(
+            onClick = {
+                viewModel.insert(
+                    task = viewModel.newTask, context = context, navController = navController
+                )
+            }, languages = languages
+        )
 
         Spacer(modifier = Modifier.height(10.dp))
     }
 }
 
 @Composable
-fun TopBodyLayer(navController: NavController) {
+fun TopBodyLayer(text: String, onClick: () -> Unit) {
     Row(horizontalArrangement = Arrangement.Start, modifier = Modifier.fillMaxWidth()) {
-        IconButton(onClick = { navController.navigate(NavigationTree.Start.name) }) {
+        IconButton(onClick = onClick) {
             val icon = Icons.Filled.KeyboardArrowLeft
             val description = "Back"
             val tint = Color.Black
@@ -106,7 +115,7 @@ fun TopBodyLayer(navController: NavController) {
         }
 
         Text(
-            text = languages.addNewEvent,
+            text = text,
             color = Color.Black,
             modifier = Modifier.padding(top = 16.dp),
             fontSize = 22.sp
@@ -115,7 +124,7 @@ fun TopBodyLayer(navController: NavController) {
 }
 
 @Composable
-fun RepeatTime(viewModel: AddViewModel) {
+fun RepeatTime(viewModel: AddViewModel, languages: Languages) {
     val stateDialog = remember { mutableStateOf(false) }
     val selectRepeat = remember { mutableStateOf(languages.oneTime) }
 
@@ -204,12 +213,11 @@ fun RepeatDialogItem(text: String, onClick: () -> Unit) {
 }
 
 @Composable
-fun AcceptButton(navController: NavController, viewModel: AddViewModel) {
+fun AcceptButton(
+    onClick: () -> Unit, languages: Languages
+) {
     TextButton(
-        onClick = {
-            navController.navigate(NavigationTree.Start.name)
-            viewModel.insert(viewModel.newTask)
-        },
+        onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 56.dp, end = 56.dp)
