@@ -88,44 +88,55 @@ fun EditScreen(navController: NavController, viewModel: EditViewModel) {
 fun EditDescriptionTextField(
     context: Context, viewModel: EditViewModel, languages: Languages, borderColor: Color
 ) {
+    val shape = RoundedCornerShape(10)
     var description by remember { mutableStateOf(TextFieldValue(viewModel.task.description)) }
     val maxChar = 130
 
+    val leadingIcon: @Composable (() -> Unit) = {
+        Icon(
+            imageVector = Icons.Default.List,
+            contentDescription = "description",
+            modifier = Modifier.padding(start = 10.dp)
+        )
+    }
+
+    val onValueChange: (TextFieldValue) -> Unit = {
+        if (it.text.length <= maxChar) {
+            description = it
+            viewModel.task.description = it.text
+        } else Toast.makeText(
+            context, languages.toastNameContainHundredTwentyCharacters, Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    val label: @Composable (() -> Unit) = {
+        Text(text = languages.enterYourDescription)
+    }
+
+    val colors = TextFieldDefaults.outlinedTextFieldColors(
+        unfocusedLeadingIconColor = Color.DarkGray,
+        focusedBorderColor = Color.Black,
+        focusedLeadingIconColor = Color.Black,
+        placeholderColor = Color.DarkGray,
+        focusedLabelColor = Color.Black,
+        cursorColor = Color.DarkGray,
+        unfocusedBorderColor = borderColor,
+        containerColor = Color.Gray.copy(0.2F)
+    )
+
+    val modifier = Modifier
+        .padding(start = 56.dp, end = 56.dp)
+        .height(200.dp)
+
     OutlinedTextField(
-        shape = RoundedCornerShape(10),
+        shape = shape,
         value = description,
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.List,
-                contentDescription = "description",
-                modifier = Modifier.padding(start = 10.dp)
-            )
-        },
-        onValueChange = {
-            if (it.text.length <= maxChar) {
-                description = it
-                viewModel.task.description = it.text
-            } else Toast.makeText(
-                context, languages.toastNameContainHundredTwentyCharacters, Toast.LENGTH_SHORT
-            ).show()
-        },
-        label = {
-            Text(text = languages.enterYourDescription)
-        },
-        placeholder = { Text(text = languages.enterYourDescription) },
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            unfocusedLeadingIconColor = Color.DarkGray,
-            focusedBorderColor = Color.Black,
-            focusedLeadingIconColor = Color.Black,
-            placeholderColor = Color.DarkGray,
-            focusedLabelColor = Color.Black,
-            cursorColor = Color.DarkGray,
-            unfocusedBorderColor = borderColor,
-            containerColor = Color.Gray.copy(0.2F)
-        ),
-        modifier = Modifier
-            .padding(start = 56.dp, end = 56.dp)
-            .height(200.dp),
+        leadingIcon = leadingIcon,
+        onValueChange = onValueChange,
+        label = label,
+        placeholder = label,
+        colors = colors,
+        modifier = modifier,
     )
 }
 
@@ -134,40 +145,48 @@ fun EditDescriptionTextField(
 fun EditEventTextField(
     context: Context, viewModel: EditViewModel, languages: Languages, borderColor: Color
 ) {
+    val shape = CircleShape
     var task by remember { mutableStateOf(TextFieldValue(viewModel.task.name)) }
     val maxChar = 20
 
-    OutlinedTextField(
-        shape = CircleShape,
-        value = task,
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Edit,
-                contentDescription = "emailIcon",
-                modifier = Modifier.padding(start = 10.dp)
-            )
-        },
-        onValueChange = {
-            if (it.text.length <= maxChar) {
-                task = it
-                viewModel.task.name = it.text
-            } else Toast.makeText(
-                context, languages.toastNameContainTwentyCharacters, Toast.LENGTH_SHORT
-            ).show()
+    val leadingIcon: @Composable (() -> Unit) = {
+        Icon(
+            imageVector = Icons.Default.Edit,
+            contentDescription = "emailIcon",
+            modifier = Modifier.padding(start = 10.dp)
+        )
+    }
 
-        },
-        label = { Text(text = languages.enterYourEvent) },
-        placeholder = { Text(text = languages.enterYourEvent) },
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            unfocusedLeadingIconColor = Color.DarkGray,
-            focusedBorderColor = Color.Black,
-            focusedLeadingIconColor = Color.Black,
-            placeholderColor = Color.DarkGray,
-            focusedLabelColor = Color.Black,
-            cursorColor = Color.DarkGray,
-            unfocusedBorderColor = borderColor,
-            containerColor = Color.Gray.copy(0.2F),
-        ),
+    val onValueChange: (TextFieldValue) -> Unit = {
+        if (it.text.length <= maxChar) {
+            task = it
+            viewModel.task.name = it.text
+        } else Toast.makeText(
+            context, languages.toastNameContainTwentyCharacters, Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    val label: @Composable (() -> Unit) = { Text(text = languages.enterYourEvent) }
+
+    val colors = TextFieldDefaults.outlinedTextFieldColors(
+        unfocusedLeadingIconColor = Color.DarkGray,
+        focusedBorderColor = Color.Black,
+        focusedLeadingIconColor = Color.Black,
+        placeholderColor = Color.DarkGray,
+        focusedLabelColor = Color.Black,
+        cursorColor = Color.DarkGray,
+        unfocusedBorderColor = borderColor,
+        containerColor = Color.Gray.copy(0.2F)
+    )
+
+    OutlinedTextField(
+        shape = shape,
+        value = task,
+        leadingIcon = leadingIcon,
+        onValueChange = onValueChange,
+        label = label,
+        placeholder = label,
+        colors = colors,
         singleLine = true
     )
 }

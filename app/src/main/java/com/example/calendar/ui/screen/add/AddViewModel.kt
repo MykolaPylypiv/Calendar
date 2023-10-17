@@ -29,8 +29,6 @@ class AddViewModel @Inject constructor(
     val listRepeat = listOf(
         languages.oneTime,
         languages.everyDay,
-        languages.everyWeek,
-        languages.everyTwoWeek,
         languages.everyMonth,
         languages.everyYear
     )
@@ -40,7 +38,7 @@ class AddViewModel @Inject constructor(
     val newTask = Task(
         repeat = languages.oneTime,
         time = "${calendar.hour}:${calendar.minute}",
-        date = "${calendar.listOfMonth[calendar.monthNumber - 1].name} ${calendar.day}, ${calendar.year}"
+        date = "${calendar.day}.${calendar.monthNumber}.${calendar.year}"
     )
 
     fun insert(task: Task, context: Context, navController: NavController) {
@@ -108,7 +106,7 @@ class AddViewModel @Inject constructor(
 
         if (dayNumber < 10) date.value = "0${date.value}"
 
-        newTask.date = "${months[month].name} ${dayNumber}, $year"
+        newTask.date = "${dayNumber}.${month}.${year}"
     }
 
     fun acceptTime(hour: Int, minute: Int) {

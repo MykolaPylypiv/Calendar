@@ -110,64 +110,40 @@ fun WeekdayRow(viewModel: StartViewModel) {
 
 @Composable
 fun TableMonth(viewModel: StartViewModel, navController: NavController) {
-    var count = -(6 - viewModel.pointer.value)
+    var count = -(6 - viewModel.pointer.intValue)
 
-    while (count < 7 - viewModel.pointer.value + viewModel.month.value.days) {
-        var newCount = 0
+    while (count < 7 - viewModel.pointer.intValue + viewModel.month.value.days) {
+        viewModel.newCount = 0
 
         Row(
             modifier = Modifier.fillMaxWidth()
         ) {
             viewModel.calendar.daysWeek.forEach { day ->
-
-                val days = viewModel.month.value.days
-                val dayNumber = viewModel.calendar.daysWeek.indexOf(day)
-
                 val text = mutableStateOf("")
                 val textColor = mutableStateOf(Color.White)
 
-                var modifier = if (viewModel.isToday(count = count, day = day)) {
-                    Modifier
-                        .weight(1F)
-                        .clip(CircleShape)
-                        .height(58.dp)
-                        .background(Color(0xffff984f))
-                } else {
-                    Modifier
-                        .weight(1F)
-                        .height(60.dp)
-                }
+                val modifier = if (viewModel.isToday(count = count, day = day)) Modifier
+                    .weight(1F)
+                    .clip(CircleShape)
+                    .height(58.dp)
+                    .background(Color(0xffff984f))
+                else if (viewModel.isEmptyFirstRow(count = count)) Modifier.height(0.dp)
+                else Modifier
+                    .weight(1F)
+                    .height(60.dp)
 
-                if (count in 1..days) { // 0 < count < days
+                val textButtonParams = viewModel.textTable(count = count, day = day)
 
-                    if (count + dayNumber <= days) {
-                        text.value = (count + dayNumber).toString()
-                        textColor.value = Color.White
-                        newCount += 1
-                    } else {
-                        text.value = (dayNumber - newCount + 1).toString()
-                        textColor.value = Color.LightGray
-                    }
-
-                    viewModel.pointerNextMonth.value = 7 - newCount
-                } else if (count <= 0 && count != -6) { // count < 0
-
-                    if (viewModel.preMonthStartDays + dayNumber <= viewModel.preMonthDays) {
-                        text.value = (viewModel.preMonthStartDays + dayNumber).toString()
-                        textColor.value = Color.LightGray
-                    } else {
-                        text.value = (count + 7 - (7 - dayNumber)).toString()
-                        textColor.value = Color.White
-                    }
-                } else modifier = Modifier.height(0.dp)
+                text.value = textButtonParams.text
+                textColor.value = textButtonParams.color
 
                 TextButton(
                     onClick = {
-                        if (textColor.value == Color.White) {
-                            navController.navigate(NavigationTree.Tasks.name)
-                            date.value =
-                                viewModel.month.value.name + " " + text.value + ", " + viewModel.year.value
-                        }
+                        viewModel.dateClick(
+                            color = textColor.value,
+                            text = text.value,
+                            navController = navController
+                        )
                     }, modifier = modifier
                 ) {
 
@@ -192,8 +168,7 @@ fun StartLowLayer(navController: NavController, day: String) {
         TextButton(
             onClick = { navController.navigate(NavigationTree.Start.name) },
             colors = ButtonDefaults.buttonColors(
-                 contentColor = Color.White,
-                containerColor = Color(0xff23405e).copy(0.85F)
+                contentColor = Color.White, containerColor = Color(0xff23405e).copy(0.85F)
             ),
             modifier = Modifier
                 .clip(CircleShape)
