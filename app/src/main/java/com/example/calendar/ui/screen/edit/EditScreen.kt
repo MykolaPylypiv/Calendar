@@ -34,12 +34,12 @@ import com.example.calendar.app.Languages
 import com.example.calendar.navigation.NavigationTree
 import com.example.calendar.ui.screen.add.AcceptButton
 import com.example.calendar.ui.screen.add.TopBodyLayer
-import com.example.calendar.ui.screen.add.borderColor
 
 @Composable
 fun EditScreen(navController: NavController, viewModel: EditViewModel) {
     val context = LocalContext.current
     val languages = viewModel.languages
+    val borderColor = Color.DarkGray
 
     Column(
         modifier = Modifier
@@ -53,11 +53,21 @@ fun EditScreen(navController: NavController, viewModel: EditViewModel) {
 
         Spacer(modifier = Modifier.height(35.dp))
 
-        EditEventTextField(context = context, viewModel = viewModel, languages = languages)
+        EditEventTextField(
+            context = context,
+            viewModel = viewModel,
+            languages = languages,
+            borderColor = borderColor
+        )
 
         Spacer(modifier = Modifier.height(40.dp))
 
-        EditDescriptionTextField(context = context, viewModel = viewModel, languages = languages)
+        EditDescriptionTextField(
+            context = context,
+            viewModel = viewModel,
+            languages = languages,
+            borderColor = borderColor
+        )
 
         Spacer(modifier = Modifier.weight(1F))
 
@@ -75,7 +85,9 @@ fun EditScreen(navController: NavController, viewModel: EditViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditDescriptionTextField(context: Context, viewModel: EditViewModel, languages: Languages) {
+fun EditDescriptionTextField(
+    context: Context, viewModel: EditViewModel, languages: Languages, borderColor: Color
+) {
     var description by remember { mutableStateOf(TextFieldValue(viewModel.task.description)) }
     val maxChar = 130
 
@@ -119,7 +131,9 @@ fun EditDescriptionTextField(context: Context, viewModel: EditViewModel, languag
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditEventTextField(context: Context, viewModel: EditViewModel, languages: Languages) {
+fun EditEventTextField(
+    context: Context, viewModel: EditViewModel, languages: Languages, borderColor: Color
+) {
     var task by remember { mutableStateOf(TextFieldValue(viewModel.task.name)) }
     val maxChar = 20
 

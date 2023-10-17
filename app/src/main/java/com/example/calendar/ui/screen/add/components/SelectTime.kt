@@ -35,7 +35,7 @@ import com.example.calendar.ui.screen.add.AddViewModel
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun SelectTime(context: Context, viewModel: AddViewModel, languages: Languages) {
+fun SelectTime(context: Context, viewModel: AddViewModel, languages: Languages, borderColor: Color) {
     val stateDialog = remember { mutableStateOf(false) }
     val stateHourDialog = remember { mutableStateOf(false) }
     val stateMinutesDialog = remember { mutableStateOf(false) }
@@ -44,7 +44,10 @@ fun SelectTime(context: Context, viewModel: AddViewModel, languages: Languages) 
     val minute = remember { mutableStateOf(viewModel.calendar.minute.toInt()) }
 
     StartRow(
-        onClick = { stateDialog.value = true }, firstText = languages.time, secondText = viewModel.time.value
+        onClick = { stateDialog.value = true },
+        firstText = languages.time,
+        secondText = viewModel.time.value,
+        borderColor = borderColor
     )
 
     if (stateDialog.value) {

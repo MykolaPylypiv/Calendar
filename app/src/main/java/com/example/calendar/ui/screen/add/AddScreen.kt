@@ -1,6 +1,5 @@
 package com.example.calendar.ui.screen.add
 
-import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -46,12 +45,11 @@ import com.example.calendar.ui.screen.add.components.EventTextField
 import com.example.calendar.ui.screen.add.components.SelectDate
 import com.example.calendar.ui.screen.add.components.SelectTime
 
-val borderColor = Color.DarkGray
-
 @Composable
 fun AddScreen(navController: NavController, viewModel: AddViewModel) {
     val context = LocalContext.current
     val languages = viewModel.languages
+    val borderColor = Color.DarkGray
 
     Column(
         modifier = Modifier
@@ -64,23 +62,38 @@ fun AddScreen(navController: NavController, viewModel: AddViewModel) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        EventTextField(context = context, viewModel = viewModel, languages = languages)
+        EventTextField(
+            context = context,
+            viewModel = viewModel,
+            languages = languages,
+            borderColor = borderColor
+        )
 
         Spacer(modifier = Modifier.height(40.dp))
 
-        RepeatTime(viewModel = viewModel, languages = languages)
+        RepeatTime(viewModel = viewModel, languages = languages, borderColor = borderColor)
 
         Spacer(modifier = Modifier.height(35.dp))
 
-        SelectDate(viewModel = viewModel, languages = languages)
+        SelectDate(viewModel = viewModel, languages = languages, borderColor = borderColor)
 
         Spacer(modifier = Modifier.height(35.dp))
 
-        SelectTime(context = context, viewModel = viewModel, languages = languages)
+        SelectTime(
+            context = context,
+            viewModel = viewModel,
+            languages = languages,
+            borderColor = borderColor
+        )
 
         Spacer(modifier = Modifier.height(35.dp))
 
-        DescriptionTextField(context = context, viewModel = viewModel, languages = languages)
+        DescriptionTextField(
+            context = context,
+            viewModel = viewModel,
+            languages = languages,
+            borderColor = borderColor
+        )
 
         Spacer(modifier = Modifier.weight(1F))
 
@@ -124,7 +137,7 @@ fun TopBodyLayer(text: String, onClick: () -> Unit) {
 }
 
 @Composable
-fun RepeatTime(viewModel: AddViewModel, languages: Languages) {
+fun RepeatTime(viewModel: AddViewModel, languages: Languages, borderColor: Color) {
     val stateDialog = remember { mutableStateOf(false) }
     val selectRepeat = remember { mutableStateOf(languages.oneTime) }
 

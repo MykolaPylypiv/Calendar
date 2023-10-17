@@ -30,10 +30,11 @@ import com.example.calendar.ui.screen.add.AddViewModel
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun SelectDate(viewModel: AddViewModel, languages: Languages) {
+fun SelectDate(viewModel: AddViewModel, languages: Languages, borderColor: Color) {
     val stateDialog = remember { mutableStateOf(false) }
     val stateDaysDialog = remember { mutableStateOf(false) }
     val stateMonthsDialog = remember { mutableStateOf(false) }
+    val stateYearsDialog = remember { mutableStateOf(false) }
 
     val dayNumber = remember { mutableStateOf(viewModel.calendar.day.toInt()) }
     val month = remember { mutableStateOf(viewModel.calendar.monthNumber - 1) }
@@ -42,7 +43,8 @@ fun SelectDate(viewModel: AddViewModel, languages: Languages) {
     StartRow(
         onClick = { stateDialog.value = true },
         firstText = languages.date,
-        secondText = viewModel.date.value
+        secondText = viewModel.date.value,
+        borderColor = borderColor,
     )
 
     if (stateDialog.value) {
@@ -67,7 +69,7 @@ fun SelectDate(viewModel: AddViewModel, languages: Languages) {
 
                         IconButtonUp {
                             dayNumber.value =
-                                if (dayNumber.value == viewModel.selectMonth(month.value).days) {
+                                if (dayNumber.value == viewModel.selectMonth(month.value, year.value).days) {
                                     1
                                 } else dayNumber.value + 1
                         }
@@ -91,7 +93,7 @@ fun SelectDate(viewModel: AddViewModel, languages: Languages) {
                         Spacer(modifier = Modifier.height(10.dp))
 
                         IconButtonDown {
-                            val daysInMonth = viewModel.selectMonth(month.value).days
+                            val daysInMonth = viewModel.selectMonth(month.value, year.value).days
 
                             dayNumber.value = if (dayNumber.value == 1) {
                                 daysInMonth
@@ -119,7 +121,7 @@ fun SelectDate(viewModel: AddViewModel, languages: Languages) {
                         IconButtonUp {
                             month.value = if (month.value == 11) 0 else month.value + 1
 
-                            val daysInMonth = viewModel.selectMonth(month.value).days
+                            val daysInMonth = viewModel.selectMonth(month.value, year.value).days
                             if (daysInMonth < dayNumber.value) dayNumber.value = 1
                         }
 
@@ -144,7 +146,7 @@ fun SelectDate(viewModel: AddViewModel, languages: Languages) {
                         IconButtonDown {
                             month.value = if (month.value == 0) 11 else month.value - 1
 
-                            val daysInMonth = viewModel.selectMonth(month.value).days
+                            val daysInMonth = viewModel.selectMonth(month.value, year.value).days
                             if (daysInMonth < dayNumber.value) dayNumber.value = 1
                         }
 
@@ -181,7 +183,7 @@ fun SelectDate(viewModel: AddViewModel, languages: Languages) {
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .clickable { stateMonthsDialog.value = true },
+                                    .clickable { stateYearsDialog.value = true },
                                 color = Color.Black,
                             )
                         }
@@ -232,7 +234,7 @@ fun SelectDate(viewModel: AddViewModel, languages: Languages) {
                         modifier = Modifier.background(Color.Gray.copy(0.2F)),
                         horizontalAlignment = Alignment.Start
                     ) {
-                        val daysInMonth = viewModel.selectMonth(month.value).days
+                        val daysInMonth = viewModel.selectMonth(month.value, year.value).days
 
                         for (i in 1..daysInMonth) {
                             item {
@@ -283,6 +285,43 @@ fun SelectDate(viewModel: AddViewModel, languages: Languages) {
                                         .clickable {
                                             stateMonthsDialog.value = false
                                             month.value = viewModel.months.indexOf(it)
+                                        },
+                                    fontSize = 24.sp,
+                                    textAlign = TextAlign.Center,
+                                )
+                            }
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.weight(1F))
+            }
+        }
+    }
+    if (stateYearsDialog.value) {
+        Dialog(onDismissRequest = { stateYearsDialog.value = false }) {
+            Row(modifier = Modifier.fillMaxWidth()) {
+                Spacer(modifier = Modifier.weight(1F))
+
+                Card(
+                    modifier = Modifier
+                        .height(300.dp)
+                        .width(150.dp)
+                        .clip(RoundedCornerShape(10))
+                ) {
+                    LazyColumn(
+                        modifier = Modifier.background(Color.Gray.copy(0.2F)),
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        for (i in viewModel.calendar.year.toInt()..viewModel.calendar.year.toInt() + 30) {
+                            item {
+                                Text(
+                                    text = i.toString(),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(40.dp)
+                                        .clickable {
+                                            stateYearsDialog.value = false
+                                            year.value = i
                                         },
                                     fontSize = 24.sp,
                                     textAlign = TextAlign.Center,

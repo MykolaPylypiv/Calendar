@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.calendar.app.Languages
-import com.example.calendar.data.db.room.TasksDao
 import com.example.calendar.data.repository.TaskRepository
 import com.example.calendar.domain.Calendar
 import com.example.calendar.domain.model.Month
@@ -58,10 +57,8 @@ class AddViewModel @Inject constructor(
         }
     }
 
-    fun selectMonth(index: Int): Month {
-        val year = calendar.year
-
-        return if (year.toInt() % 4 == 0 && index == 1) {
+    fun selectMonth(index: Int, year: Int): Month {
+        return if (year % 4 == 0 && index == 1) {
             Month(name = "February", days = 29)
         } else calendar.listOfMonth[index]
     }

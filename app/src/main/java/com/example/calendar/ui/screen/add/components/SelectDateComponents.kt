@@ -28,7 +28,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.calendar.app.Languages
-import com.example.calendar.ui.screen.add.borderColor
 
 @Composable
 fun IconButtonUp(onClick: () -> Unit) {
@@ -74,7 +73,7 @@ fun AcceptRow(onClick: () -> Unit, languages: Languages) {
 }
 
 @Composable
-fun StartRow(onClick: () -> Unit, firstText: String, secondText: String) {
+fun StartRow(onClick: () -> Unit, firstText: String, secondText: String, borderColor: Color) {
     Row(
         modifier = Modifier
             .height(50.dp)
