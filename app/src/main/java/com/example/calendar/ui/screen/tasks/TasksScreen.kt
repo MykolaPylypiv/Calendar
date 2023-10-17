@@ -189,7 +189,7 @@ fun TaskItem(
 
             Row(modifier = Modifier.weight(1F)) {
                 Text(
-                    text = task.time,
+                    text = task.time.replace(".", ":"),
                     fontSize = 20.sp,
                     color = Color.Black,
                     modifier = Modifier.weight(1F),

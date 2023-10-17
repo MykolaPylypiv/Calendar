@@ -42,26 +42,31 @@ class TasksViewModel @Inject constructor(
         val tasks: MutableList<Task> = mutableListOf()
 
         viewModelScope.launch {
-            for (i in repository.tasks(date = date.value)) {
-                if (i.repeat == "Every day") {
-                    tasks.add(i)
-                } else if (i.repeat == "Every year") {
+            for (item in repository.tasks(date = date.value)) {
+                item.time = item.time.replace(":", ".")
+
+                if (item.repeat == "One time") {
+                    tasks.add(item)
+                } else if (item.repeat == "Every day") {
+                    tasks.add(item)
+                } else if (item.repeat == "Every year") {
                     val selectDate = date.value.substring(0, date.value.length - 5)
-                    val taskDate = i.date.substring(0, i.date.length - 5)
+                    val taskDate = item.date.substring(0, item.date.length - 5)
 
                     if (selectDate == taskDate) {
-                        tasks.add(i)
+                        tasks.add(item)
                     }
-                } else if (i.repeat == "Every month") {
+                } else if (item.repeat == "Every month") {
                     val selectDay =
                         date.value.substring(date.value.length - 8, date.value.length - 6)
-                    val taskDay = i.date.substring(i.date.length - 8, i.date.length - 6)
+                    val taskDay = item.date.substring(item.date.length - 8, item.date.length - 6)
 
                     if (selectDay == taskDay) {
-                        tasks.add(i)
+                        tasks.add(item)
                     }
                 }
             }
+            tasks.sortBy { it.time.toFloat() }
 
             _tasks.value = tasks
         }

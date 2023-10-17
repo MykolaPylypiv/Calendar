@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -50,7 +51,7 @@ fun StartScreen(navController: NavController, viewModel: StartViewModel) {
 
         Spacer(modifier = Modifier.weight(1F))
 
-        AddButton(navController = navController)
+        StartLowLayer(navController = navController, day = viewModel.calendar.day)
 
         Spacer(modifier = Modifier.height(8.dp))
     }
@@ -164,7 +165,8 @@ fun TableMonth(viewModel: StartViewModel, navController: NavController) {
                     onClick = {
                         if (textColor.value == Color.White) {
                             navController.navigate(NavigationTree.Tasks.name)
-                            date.value = viewModel.month.value.name + " " + text.value + ", " + viewModel.year.value
+                            date.value =
+                                viewModel.month.value.name + " " + text.value + ", " + viewModel.year.value
                         }
                     }, modifier = modifier
                 ) {
@@ -183,9 +185,24 @@ fun TableMonth(viewModel: StartViewModel, navController: NavController) {
 }
 
 @Composable
-fun AddButton(navController: NavController) {
+fun StartLowLayer(navController: NavController, day: String) {
     Row {
         Spacer(modifier = Modifier.weight(1F))
+
+        TextButton(
+            onClick = { navController.navigate(NavigationTree.Start.name) },
+            colors = ButtonDefaults.buttonColors(
+                 contentColor = Color.White,
+                containerColor = Color(0xff23405e).copy(0.85F)
+            ),
+            modifier = Modifier
+                .clip(CircleShape)
+                .size(68.dp),
+        ) {
+            Text(text = day, fontSize = 24.sp, maxLines = 1)
+        }
+
+        Spacer(modifier = Modifier.width(12.dp))
 
         IconButton(
             onClick = { navController.navigate(NavigationTree.Add.name) },
@@ -193,7 +210,7 @@ fun AddButton(navController: NavController) {
                 .clip(CircleShape)
                 .background(Color.Gray.copy(0.5f))
                 .border(2.dp, Color.Gray.copy(0.2F), CircleShape)
-                .size(64.dp),
+                .size(68.dp),
         ) {
             Icon(
                 tint = Color.White,

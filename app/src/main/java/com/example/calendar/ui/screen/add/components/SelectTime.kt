@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -35,13 +36,15 @@ import com.example.calendar.ui.screen.add.AddViewModel
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun SelectTime(context: Context, viewModel: AddViewModel, languages: Languages, borderColor: Color) {
+fun SelectTime(
+    context: Context, viewModel: AddViewModel, languages: Languages, borderColor: Color
+) {
     val stateDialog = remember { mutableStateOf(false) }
     val stateHourDialog = remember { mutableStateOf(false) }
     val stateMinutesDialog = remember { mutableStateOf(false) }
 
-    val hour = remember { mutableStateOf(viewModel.calendar.hour.toInt()) }
-    val minute = remember { mutableStateOf(viewModel.calendar.minute.toInt()) }
+    val hour = remember { mutableIntStateOf(viewModel.calendar.hour.toInt()) }
+    val minute = remember { mutableIntStateOf(viewModel.calendar.minute.toInt()) }
 
     StartRow(
         onClick = { stateDialog.value = true },
@@ -72,12 +75,12 @@ fun SelectTime(context: Context, viewModel: AddViewModel, languages: Languages, 
                         Spacer(modifier = Modifier.height(25.dp))
 
                         IconButtonUp {
-                            hour.value = if (hour.value == 23) 0 else hour.value + 1
+                            hour.intValue = viewModel.hourUp(hour.intValue)
                         }
 
                         Spacer(modifier = Modifier.height(10.dp))
 
-                        AnimatedContent(targetState = hour.value, label = "") { targetCount ->
+                        AnimatedContent(targetState = hour.intValue, label = "") { targetCount ->
                             Text(
                                 text = targetCount.toString(),
                                 fontSize = 24.sp,
@@ -92,7 +95,7 @@ fun SelectTime(context: Context, viewModel: AddViewModel, languages: Languages, 
                         Spacer(modifier = Modifier.height(10.dp))
 
                         IconButtonDown {
-                            hour.value = if (hour.value == 0) 23 else hour.value - 1
+                            hour.intValue = viewModel.hourDown(hour.intValue)
                         }
 
                         Spacer(modifier = Modifier.height(15.dp))
@@ -114,12 +117,12 @@ fun SelectTime(context: Context, viewModel: AddViewModel, languages: Languages, 
                         Spacer(modifier = Modifier.height(25.dp))
 
                         IconButtonUp {
-                            minute.value = if (minute.value >= 55) 0 else minute.value + 5
+                            minute.intValue = viewModel.minuteUp(minute.intValue)
                         }
 
                         Spacer(modifier = Modifier.height(10.dp))
 
-                        AnimatedContent(targetState = minute.value, label = "") { targetCount ->
+                        AnimatedContent(targetState = minute.intValue, label = "") { targetCount ->
                             Text(
                                 text = targetCount.toString(),
                                 fontSize = 24.sp,
@@ -134,7 +137,7 @@ fun SelectTime(context: Context, viewModel: AddViewModel, languages: Languages, 
                         Spacer(modifier = Modifier.height(10.dp))
 
                         IconButtonDown {
-                            minute.value = if (minute.value < 5) 55 else minute.value - 5
+                            minute.intValue = viewModel.minuteDown(minute.intValue)
                         }
 
                         Spacer(modifier = Modifier.height(15.dp))
@@ -146,8 +149,7 @@ fun SelectTime(context: Context, viewModel: AddViewModel, languages: Languages, 
                 Spacer(modifier = Modifier.height(25.dp))
 
                 AcceptRow(languages = languages, onClick = {
-                    viewModel.time.value = "${hour.value}.${minute.value}"
-                    viewModel.newTask.time = "${hour.value}.${minute.value}"
+                    viewModel.acceptTime(hour = hour.intValue, minute = minute.intValue)
                     stateDialog.value = false
                 })
 
@@ -178,7 +180,7 @@ fun SelectTime(context: Context, viewModel: AddViewModel, languages: Languages, 
                                         .height(40.dp)
                                         .clickable {
                                             stateHourDialog.value = false
-                                            hour.value = it
+                                            hour.intValue = it
                                         },
                                     fontSize = 24.sp,
                                     textAlign = TextAlign.Center,
@@ -212,8 +214,7 @@ fun SelectTime(context: Context, viewModel: AddViewModel, languages: Languages, 
                             val value = remember { mutableStateOf("") }
 
                             TextField(
-                                value = value.value,
-                                onValueChange = {
+                                value = value.value, onValueChange = {
                                     try {
                                         if (it.toInt() > 59 || it.toInt() < 0) {
                                             Toast.makeText(
@@ -224,21 +225,16 @@ fun SelectTime(context: Context, viewModel: AddViewModel, languages: Languages, 
                                             value.value = ""
                                         } else {
                                             value.value = it
-                                            minute.value = it.toInt()
+                                            minute.intValue = it.toInt()
                                         }
                                     } catch (e: NumberFormatException) {
                                         Toast.makeText(
-                                            context,
-                                            languages.toastEnterNumber,
-                                            Toast.LENGTH_SHORT
+                                            context, languages.toastEnterNumber, Toast.LENGTH_SHORT
                                         ).show()
                                         value.value = ""
                                     }
-                                },
-                                singleLine = true,
-                                colors = TextFieldDefaults.textFieldColors(
-                                    focusedIndicatorColor = Color.DarkGray,
-                                    cursorColor = Color.Gray
+                                }, singleLine = true, colors = TextFieldDefaults.textFieldColors(
+                                    focusedIndicatorColor = Color.DarkGray, cursorColor = Color.Gray
                                 )
                             )
                         }
@@ -252,7 +248,7 @@ fun SelectTime(context: Context, viewModel: AddViewModel, languages: Languages, 
                                         .height(40.dp)
                                         .clickable {
                                             stateMinutesDialog.value = false
-                                            minute.value = it
+                                            minute.intValue = it
                                         },
                                     fontSize = 24.sp,
                                     textAlign = TextAlign.Center,

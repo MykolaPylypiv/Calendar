@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -36,9 +37,9 @@ fun SelectDate(viewModel: AddViewModel, languages: Languages, borderColor: Color
     val stateMonthsDialog = remember { mutableStateOf(false) }
     val stateYearsDialog = remember { mutableStateOf(false) }
 
-    val dayNumber = remember { mutableStateOf(viewModel.calendar.day.toInt()) }
-    val month = remember { mutableStateOf(viewModel.calendar.monthNumber - 1) }
-    val year = remember { mutableStateOf(viewModel.calendar.year.toInt()) }
+    val dayNumber = remember { mutableIntStateOf(viewModel.calendar.day.toInt()) }
+    val month = remember { mutableIntStateOf(viewModel.calendar.monthNumber - 1) }
+    val year = remember { mutableIntStateOf(viewModel.calendar.year.toInt()) }
 
     StartRow(
         onClick = { stateDialog.value = true },
@@ -68,19 +69,20 @@ fun SelectDate(viewModel: AddViewModel, languages: Languages, borderColor: Color
                         Spacer(modifier = Modifier.height(25.dp))
 
                         IconButtonUp {
-                            dayNumber.value =
-                                if (dayNumber.value == viewModel.selectMonth(month.value, year.value).days) {
-                                    1
-                                } else dayNumber.value + 1
+                            dayNumber.intValue = viewModel.dayNumberUp(
+                                dayNumber = dayNumber.intValue,
+                                month = month.intValue,
+                                year = year.intValue
+                            )
                         }
 
                         Spacer(modifier = Modifier.height(10.dp))
 
                         AnimatedContent(
-                            targetState = dayNumber.value.toString(), label = ""
+                            targetState = dayNumber.intValue, label = ""
                         ) { targetCount ->
                             Text(
-                                text = targetCount,
+                                text = targetCount.toString(),
                                 fontSize = 24.sp,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier
@@ -93,11 +95,11 @@ fun SelectDate(viewModel: AddViewModel, languages: Languages, borderColor: Color
                         Spacer(modifier = Modifier.height(10.dp))
 
                         IconButtonDown {
-                            val daysInMonth = viewModel.selectMonth(month.value, year.value).days
-
-                            dayNumber.value = if (dayNumber.value == 1) {
-                                daysInMonth
-                            } else dayNumber.value - 1
+                            dayNumber.intValue = viewModel.dayNumberDown(
+                                dayNumber = dayNumber.intValue,
+                                month = month.intValue,
+                                year = year.intValue
+                            )
                         }
 
                         Spacer(modifier = Modifier.height(15.dp))
@@ -119,16 +121,19 @@ fun SelectDate(viewModel: AddViewModel, languages: Languages, borderColor: Color
                         Spacer(modifier = Modifier.height(25.dp))
 
                         IconButtonUp {
-                            month.value = if (month.value == 11) 0 else month.value + 1
+                            month.intValue = viewModel.monthUp(month.intValue)
 
-                            val daysInMonth = viewModel.selectMonth(month.value, year.value).days
-                            if (daysInMonth < dayNumber.value) dayNumber.value = 1
+                            dayNumber.intValue = viewModel.dayNumberOverflow(
+                                dayNumber = dayNumber.intValue,
+                                month = month.intValue,
+                                year = year.intValue
+                            )
                         }
 
                         Spacer(modifier = Modifier.height(10.dp))
 
                         AnimatedContent(
-                            targetState = viewModel.months[month.value], label = ""
+                            targetState = viewModel.months[month.intValue], label = ""
                         ) { targetCount ->
                             Text(
                                 text = targetCount.name,
@@ -144,10 +149,13 @@ fun SelectDate(viewModel: AddViewModel, languages: Languages, borderColor: Color
                         Spacer(modifier = Modifier.height(10.dp))
 
                         IconButtonDown {
-                            month.value = if (month.value == 0) 11 else month.value - 1
+                            month.intValue = viewModel.monthDown(month.intValue)
 
-                            val daysInMonth = viewModel.selectMonth(month.value, year.value).days
-                            if (daysInMonth < dayNumber.value) dayNumber.value = 1
+                            dayNumber.intValue = viewModel.dayNumberOverflow(
+                                dayNumber = dayNumber.intValue,
+                                month = month.intValue,
+                                year = year.intValue
+                            )
                         }
 
                         Spacer(modifier = Modifier.height(15.dp))
@@ -169,13 +177,13 @@ fun SelectDate(viewModel: AddViewModel, languages: Languages, borderColor: Color
                         Spacer(modifier = Modifier.height(25.dp))
 
                         IconButtonUp {
-                            year.value = year.value + 1
-                        } // Зробити високосний рік
+                            year.intValue = year.intValue + 1
+                        }
 
                         Spacer(modifier = Modifier.height(10.dp))
 
                         AnimatedContent(
-                            targetState = year.value, label = ""
+                            targetState = year.intValue, label = ""
                         ) { targetCount ->
                             Text(
                                 text = targetCount.toString(),
@@ -191,9 +199,8 @@ fun SelectDate(viewModel: AddViewModel, languages: Languages, borderColor: Color
                         Spacer(modifier = Modifier.height(10.dp))
 
                         IconButtonDown {
-                            val nowYear = viewModel.calendar.year.toInt()
-                            year.value = if (year.value == nowYear) nowYear else year.value - 1
-                        } // Зробити високосний рік
+                            year.intValue = viewModel.yearDown(year = year.intValue)
+                        }
 
                         Spacer(modifier = Modifier.height(15.dp))
                     }
@@ -202,17 +209,10 @@ fun SelectDate(viewModel: AddViewModel, languages: Languages, borderColor: Color
                 Spacer(modifier = Modifier.height(25.dp))
 
                 AcceptRow(languages = languages, onClick = {
-                    if (month.value + 1 < 10) viewModel.date.value =
-                        "${dayNumber.value}.0${month.value + 1}.${year.value}"
-                    else viewModel.date.value =
-                        "${dayNumber.value}.${month.value + 1}.${year.value}"
+                    viewModel.acceptDate(
+                        dayNumber = dayNumber.intValue, month = month.intValue, year = year.intValue
+                    )
 
-                    if (dayNumber.value < 10) {
-                        viewModel.date.value = "0${viewModel.date.value}"
-                    }
-
-                    viewModel.newTask.date =
-                        "${viewModel.months[month.value].name} ${dayNumber.value}, ${year.value}"
                     stateDialog.value = false
                 })
 
@@ -234,7 +234,7 @@ fun SelectDate(viewModel: AddViewModel, languages: Languages, borderColor: Color
                         modifier = Modifier.background(Color.Gray.copy(0.2F)),
                         horizontalAlignment = Alignment.Start
                     ) {
-                        val daysInMonth = viewModel.selectMonth(month.value, year.value).days
+                        val daysInMonth = viewModel.selectMonth(month.intValue, year.intValue).days
 
                         for (i in 1..daysInMonth) {
                             item {
@@ -245,7 +245,7 @@ fun SelectDate(viewModel: AddViewModel, languages: Languages, borderColor: Color
                                         .height(40.dp)
                                         .clickable {
                                             stateDaysDialog.value = false
-                                            dayNumber.value = i
+                                            dayNumber.intValue = i
                                         },
                                     fontSize = 24.sp,
                                     textAlign = TextAlign.Center,
@@ -284,7 +284,7 @@ fun SelectDate(viewModel: AddViewModel, languages: Languages, borderColor: Color
                                         .height(40.dp)
                                         .clickable {
                                             stateMonthsDialog.value = false
-                                            month.value = viewModel.months.indexOf(it)
+                                            month.intValue = viewModel.months.indexOf(it)
                                         },
                                     fontSize = 24.sp,
                                     textAlign = TextAlign.Center,
@@ -312,7 +312,10 @@ fun SelectDate(viewModel: AddViewModel, languages: Languages, borderColor: Color
                         modifier = Modifier.background(Color.Gray.copy(0.2F)),
                         horizontalAlignment = Alignment.Start
                     ) {
-                        for (i in viewModel.calendar.year.toInt()..viewModel.calendar.year.toInt() + 30) {
+                        val firstYear = viewModel.calendar.year.toInt()
+                        val lastYear = viewModel.calendar.year.toInt() + 30
+
+                        for (i in firstYear..lastYear) {
                             item {
                                 Text(
                                     text = i.toString(),
@@ -321,7 +324,7 @@ fun SelectDate(viewModel: AddViewModel, languages: Languages, borderColor: Color
                                         .height(40.dp)
                                         .clickable {
                                             stateYearsDialog.value = false
-                                            year.value = i
+                                            year.intValue = i
                                         },
                                     fontSize = 24.sp,
                                     textAlign = TextAlign.Center,
