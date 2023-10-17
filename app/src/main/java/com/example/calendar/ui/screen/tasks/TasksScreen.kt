@@ -1,6 +1,5 @@
 package com.example.calendar.ui.screen.tasks
 
-import android.widget.Space
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.expandVertically
@@ -47,8 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.calendar.app.Languages
-import com.example.calendar.app.date
-import com.example.calendar.app.selectTask
+import com.example.calendar.data.repository.Repository
 import com.example.calendar.domain.model.Task
 import com.example.calendar.navigation.NavigationTree
 import kotlinx.coroutines.launch
@@ -137,7 +135,7 @@ fun TopBodyLayer(navController: NavController, languages: Languages) {
         }
 
         Text(
-            text = languages.taskTextTopBodyLayer + date.value,
+            text = languages.taskTextTopBodyLayer + Repository.selectDate.value,
             color = Color.Black,
             modifier = Modifier.padding(top = 16.dp),
             fontSize = 22.sp
@@ -172,7 +170,7 @@ fun TaskItem(
                 .fillMaxHeight()
                 .clickable {
                     navController.navigate(NavigationTree.Edit.name)
-                    selectTask.value = task
+                    Repository.selectTask.value = task
                 }, verticalArrangement = Arrangement.Center
         ) {
             Spacer(modifier = Modifier.height(10.dp))

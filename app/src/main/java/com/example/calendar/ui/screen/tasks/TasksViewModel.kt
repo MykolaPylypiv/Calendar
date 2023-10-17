@@ -8,8 +8,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.calendar.app.Languages
-import com.example.calendar.app.date
 import com.example.calendar.data.repository.TaskRepository
+import com.example.calendar.data.repository.Repository
 import com.example.calendar.domain.model.Task
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -42,9 +42,9 @@ class TasksViewModel @Inject constructor(
         val tasks: MutableList<Task> = mutableListOf()
 
         viewModelScope.launch {
-            val dateList = date.value.split(".")
+            val dateList = Repository.selectDate.value.split(".")
 
-            for (item in repository.tasks(date = date.value)) {
+            for (item in repository.tasks(date = Repository.selectDate.value)) {
                 item.time = item.time.replace(":", ".")
 
                 val taskDateList = item.date.split(".")

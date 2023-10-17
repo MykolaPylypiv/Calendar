@@ -5,27 +5,28 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
-import com.example.calendar.app.date
 import com.example.calendar.domain.Calendar
+import com.example.calendar.data.repository.Repository
 import com.example.calendar.domain.model.Month
+import com.example.calendar.domain.model.TextButtonParams
 import com.example.calendar.navigation.NavigationTree
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class StartViewModel @Inject constructor(val calendar: Calendar) : ViewModel() {
-    var monthIndex = calendar.monthNumber - 1
-
     val year = mutableStateOf(calendar.year)
+    val month = mutableStateOf(selectMonth(year = year.value, index = calendar.monthNumber - 1))
 
-    val month = mutableStateOf(selectMonth(year = year.value, index = monthIndex))
     val nameMonth = mutableStateOf(month.value.name)
 
     val pointer = mutableIntStateOf(calendar.day.toInt() % 7 - calendar.dayOfWeek.toInt())
-    val pointerNextMonth = mutableIntStateOf(0)
+    val newCount = mutableIntStateOf(0)
 
-    var preMonthDays = selectMonth(year = year.value, index = monthIndex - 1).days
-    var preMonthStartDays = preMonthDays - (6 - pointer.intValue)
+    private var monthIndex = calendar.monthNumber - 1
+    private var pointerNextMonth = 0
+    private var preMonthDays = selectMonth(year = year.value, index = monthIndex - 1).days
+    private var preMonthStartDays = preMonthDays - (6 - pointer.intValue)
 
     fun next() {
         if (monthIndex == 11) {
@@ -37,7 +38,7 @@ class StartViewModel @Inject constructor(val calendar: Calendar) : ViewModel() {
             preMonthDays = selectMonth(year = year.value, index = monthIndex - 1).days
         }
 
-        pointer.intValue = pointerNextMonth.intValue
+        pointer.intValue = pointerNextMonth
         preMonthStartDays = preMonthDays - (6 - pointer.intValue)
     }
 
@@ -56,8 +57,6 @@ class StartViewModel @Inject constructor(val calendar: Calendar) : ViewModel() {
         preMonthStartDays = preMonthDays - 6 + pointer.intValue
     }
 
-    var newCount = 0
-
     fun textTable(count: Int, day:String): TextButtonParams {
         val days = month.value.days
         val dayNumber = calendar.daysWeek.indexOf(day)
@@ -70,13 +69,13 @@ class StartViewModel @Inject constructor(val calendar: Calendar) : ViewModel() {
             if (count + dayNumber <= days) {
                 text = (count + dayNumber).toString()
                 color = Color.White
-                newCount += 1
+                newCount.intValue += 1
             } else {
-                text = (dayNumber - newCount + 1).toString()
+                text = (dayNumber - newCount.intValue + 1).toString()
                 color = Color.LightGray
             }
 
-            pointerNextMonth.intValue = 7 - newCount
+            pointerNextMonth = 7 - newCount.intValue
         } else if (count <= 0 && count != -6) { // count < 0
 
             if (preMonthStartDays + dayNumber <= preMonthDays) {
@@ -94,8 +93,7 @@ class StartViewModel @Inject constructor(val calendar: Calendar) : ViewModel() {
     fun dateClick(color: Color, text: String, navController: NavController) {
         if (color == Color.White) {
             navController.navigate(NavigationTree.Tasks.name)
-            date.value =
-                "${text}.${monthIndex + 1}.${year.value}"
+            Repository.selectDate.value = "${text}.${monthIndex + 1}.${year.value}"
         }
     }
 
@@ -119,8 +117,3 @@ class StartViewModel @Inject constructor(val calendar: Calendar) : ViewModel() {
         } else calendar.listOfMonth[index]
     }
 }
-
-data class TextButtonParams(
-    val text: String,
-    val color: Color
-)

@@ -30,7 +30,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.calendar.app.date
 import com.example.calendar.navigation.NavigationTree
 
 @Composable
@@ -113,7 +112,7 @@ fun TableMonth(viewModel: StartViewModel, navController: NavController) {
     var count = -(6 - viewModel.pointer.intValue)
 
     while (count < 7 - viewModel.pointer.intValue + viewModel.month.value.days) {
-        viewModel.newCount = 0
+        viewModel.newCount.intValue = 0
 
         Row(
             modifier = Modifier.fillMaxWidth()

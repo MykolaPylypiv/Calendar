@@ -64,8 +64,6 @@ class AddViewModel @Inject constructor(
 
     val time = mutableStateOf("${calendar.hour}.${calendar.minute}")
 
-    //Гавнокод
-
     fun minuteUp(minute: Int): Int = if (minute >= 55) 0 else minute + 5
 
     fun minuteDown(minute: Int): Int = if (minute < 5) 55 else minute - 5
