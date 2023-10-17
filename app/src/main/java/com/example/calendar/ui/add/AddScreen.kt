@@ -1,4 +1,4 @@
-package com.example.calendar.ui.screen.add
+package com.example.calendar.ui.add
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -40,10 +40,10 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.example.calendar.app.Languages
 import com.example.calendar.navigation.NavigationTree
-import com.example.calendar.ui.screen.add.components.DescriptionTextField
-import com.example.calendar.ui.screen.add.components.EventTextField
-import com.example.calendar.ui.screen.add.components.SelectDate
-import com.example.calendar.ui.screen.add.components.SelectTime
+import com.example.calendar.ui.add.components.DescriptionTextField
+import com.example.calendar.ui.add.components.EventTextField
+import com.example.calendar.ui.add.components.SelectDate
+import com.example.calendar.ui.add.components.SelectTime
 
 @Composable
 fun AddScreen(navController: NavController, viewModel: AddViewModel) {

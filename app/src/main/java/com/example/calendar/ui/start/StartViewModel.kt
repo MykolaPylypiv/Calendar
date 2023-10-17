@@ -1,4 +1,4 @@
-package com.example.calendar.ui.screen.start
+package com.example.calendar.ui.start
 
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf

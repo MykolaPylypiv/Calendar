@@ -1,4 +1,4 @@
-package com.example.calendar.ui.screen.edit
+package com.example.calendar.ui.edit
 
 import android.content.Context
 import android.widget.Toast
@@ -32,8 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.calendar.app.Languages
 import com.example.calendar.navigation.NavigationTree
-import com.example.calendar.ui.screen.add.AcceptButton
-import com.example.calendar.ui.screen.add.TopBodyLayer
+import com.example.calendar.ui.add.AcceptButton
+import com.example.calendar.ui.add.TopBodyLayer
 
 @Composable
 fun EditScreen(navController: NavController, viewModel: EditViewModel) {

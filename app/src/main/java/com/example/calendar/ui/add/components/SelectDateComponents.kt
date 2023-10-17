@@ -1,4 +1,4 @@
-package com.example.calendar.ui.screen.add.components
+package com.example.calendar.ui.add.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

@@ -1,4 +1,4 @@
-package com.example.calendar.ui.screen.tasks
+package com.example.calendar.ui.tasks
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
@@ -64,7 +64,9 @@ fun TasksScreen(navController: NavController, viewModel: TasksViewModel) {
         item {
             Spacer(modifier = Modifier.height(8.dp))
 
-            TopBodyLayer(navController = navController, languages)
+            TopBodyLayer(
+                navController = navController, languages = languages, viewModel = viewModel
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -118,7 +120,7 @@ fun TasksScreen(navController: NavController, viewModel: TasksViewModel) {
 }
 
 @Composable
-fun TopBodyLayer(navController: NavController, languages: Languages) {
+fun TopBodyLayer(navController: NavController, languages: Languages, viewModel: TasksViewModel) {
     Row(
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier.background(Color.Transparent)
@@ -135,7 +137,7 @@ fun TopBodyLayer(navController: NavController, languages: Languages) {
         }
 
         Text(
-            text = languages.taskTextTopBodyLayer + Repository.selectDate.value,
+            text = languages.taskTextTopBodyLayer + viewModel.topBodyText(),
             color = Color.Black,
             modifier = Modifier.padding(top = 16.dp),
             fontSize = 22.sp

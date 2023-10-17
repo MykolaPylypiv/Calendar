@@ -1,4 +1,4 @@
-package com.example.calendar.ui.screen.tasks
+package com.example.calendar.ui.tasks
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.calendar.app.Languages
 import com.example.calendar.data.repository.TaskRepository
 import com.example.calendar.data.repository.Repository
+import com.example.calendar.domain.Calendar
 import com.example.calendar.domain.model.Task
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -17,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TasksViewModel @Inject constructor(
-    val languages: Languages, private val repository: TaskRepository
+    val languages: Languages, private val repository: TaskRepository, private val calendar: Calendar
 ) : ViewModel() {
 
     private val _tasks = mutableStateOf<List<Task>>(emptyList())
@@ -38,6 +39,16 @@ class TasksViewModel @Inject constructor(
         visible.animateTo(targetValue = 1f, animationSpec = tween(10))
     }
 
+    fun topBodyText(): String {
+        val dateList = Repository.selectDate.value.split(".")
+
+        val day = dateList[0]
+        val month = calendar.listOfMonth[dateList[1].toInt() - 1].name
+        val year = dateList[2]
+
+        return "$day $month, $year"
+    }
+
     private fun loadTask() {
         val tasks: MutableList<Task> = mutableListOf()
 
@@ -49,25 +60,18 @@ class TasksViewModel @Inject constructor(
 
                 val taskDateList = item.date.split(".")
 
-                if (item.repeat == "One time") {
-                    tasks.add(item)
-                } else if (item.repeat == "Every day") {
-                    tasks.add(item)
-                } else if (item.repeat == "Every year") {
+                if (item.repeat == "One time" || item.repeat == "Every day") tasks.add(item)
+                else if (item.repeat == "Every year") {
                     val selectDate = dateList[0] + dateList[1]
                     val taskDate = taskDateList[0] + taskDateList[1]
 
-                    if (selectDate == taskDate) {
-                        tasks.add(item)
-                    }
+                    if (selectDate == taskDate) tasks.add(item)
+
                 } else if (item.repeat == "Every month") {
                     val selectDay = dateList[0]
                     val taskDay = taskDateList[0]
 
-                    if (selectDay == taskDay) {
-                        tasks.add(item)
-                    }
-
+                    if (selectDay == taskDay) tasks.add(item)
                 }
             }
             tasks.sortBy { it.time.toFloat() }

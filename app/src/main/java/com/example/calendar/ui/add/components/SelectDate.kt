@@ -1,4 +1,4 @@
-package com.example.calendar.ui.screen.add.components
+package com.example.calendar.ui.add.components
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.calendar.app.Languages
-import com.example.calendar.ui.screen.add.AddViewModel
+import com.example.calendar.ui.add.AddViewModel
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable

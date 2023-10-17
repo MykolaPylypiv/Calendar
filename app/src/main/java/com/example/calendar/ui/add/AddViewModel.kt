@@ -1,4 +1,4 @@
-package com.example.calendar.ui.screen.add
+package com.example.calendar.ui.add
 
 import android.content.Context
 import android.widget.Toast
