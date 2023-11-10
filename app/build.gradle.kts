@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace = "com.example.calendar"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.example.calendar"
         minSdk = 24
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -54,12 +54,14 @@ android {
 dependencies {
 
     //Core
-    implementation("androidx.core:core-ktx:1.9.0")
+    implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
 
     //Compose
-    implementation("androidx.activity:activity-compose:1.7.2")
+    implementation("androidx.compose.foundation:foundation:1.6.0-alpha01")
+    implementation("androidx.activity:activity-compose:1.8.0")
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
+    implementation ("androidx.compose.runtime:runtime-livedata:1.5.4")
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
@@ -75,26 +77,25 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     //Navigation
-    val navVersion = "2.5.3"
+    val navVersion = "2.7.5"
 
     implementation("androidx.navigation:navigation-compose:$navVersion")
 
     // Room
-    val roomVersion = "2.5.2"
+    val roomVersion = "2.6.0"
 
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation ("androidx.room:room-common:$roomVersion")
     annotationProcessor ("androidx.room:room-compiler:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
-    implementation ("androidx.compose.runtime:runtime-livedata:1.5.3")
     implementation("androidx.room:room-ktx:$roomVersion")
     testImplementation("androidx.room:room-testing:$roomVersion")
 
-    val hiltVersion = "2.44"
+    val hiltVersion = "2.48"
 
     implementation("com.google.dagger:hilt-android:$hiltVersion")
     kapt("com.google.dagger:hilt-android-compiler:$hiltVersion")
 
-    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
 
 }

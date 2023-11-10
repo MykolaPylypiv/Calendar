@@ -34,35 +34,6 @@ class StartViewModel @Inject constructor(val calendar: Calendar, private val con
         }
     }
 
-    fun next() {
-        if (monthIndex == 11) {
-            year.value = (year.value.toInt() + 1).toString()
-            changeMonth(-11)
-            preMonthDays = selectMonth(year = year.value, index = 11).days
-        } else {
-            changeMonth(1)
-            preMonthDays = selectMonth(year = year.value, index = monthIndex - 1).days
-        }
-
-        pointer.intValue = pointerNextMonth
-        preMonthStartDays = preMonthDays - (6 - pointer.intValue)
-    }
-
-    fun back() {
-        if (monthIndex == 0) {
-            year.value = (year.value.toInt() - 1).toString()
-            changeMonth(11)
-            preMonthDays = selectMonth(year = year.value, index = 0).days
-        } else {
-            changeMonth(-1)
-            preMonthDays = selectMonth(year = year.value, index = monthIndex - 1).days
-        }
-
-        val term = if (pointer.intValue + month.value.days > 35) 42 else 35
-        pointer.intValue = - (term - pointer.intValue - month.value.days - 7)
-        preMonthStartDays = preMonthDays - 6 + pointer.intValue
-    }
-
     fun textTable(count: Int, day:String): TextButtonParams {
         val days = month.value.days
         val dayNumber = calendar.daysWeek.indexOf(day)
@@ -109,6 +80,34 @@ class StartViewModel @Inject constructor(val calendar: Calendar, private val con
         return (calendar.day.toInt() == count + calendar.daysWeek.indexOf(day) &&
                 monthIndex == calendar.monthNumber - 1 &&
                 calendar.year == year.value)
+    }
+
+    fun next() {
+        if (monthIndex == 11) {
+            year.value = (year.value.toInt() + 1).toString()
+            changeMonth(-11)
+            preMonthDays = selectMonth(year = year.value, index = 11).days
+        } else {
+            changeMonth(1)
+            preMonthDays = selectMonth(year = year.value, index = monthIndex - 1).days
+        }
+
+        pointer.intValue = pointerNextMonth
+        preMonthStartDays = preMonthDays - (6 - pointer.intValue)
+    }
+
+    fun back() {
+        if (monthIndex == 0) {
+            year.value = (year.value.toInt() - 1).toString()
+            changeMonth(11)
+            preMonthDays = selectMonth(year = year.value, index = 0).days
+        } else {
+            changeMonth(-1)
+        }
+
+        val term = if (pointer.intValue + month.value.days > 35) 42 else 35
+        pointer.intValue = - (term - pointer.intValue - month.value.days - 7)
+        preMonthStartDays = preMonthDays - 6 + pointer.intValue
     }
 
     private fun changeMonth(index: Int) {
