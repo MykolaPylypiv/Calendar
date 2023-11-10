@@ -18,10 +18,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EditViewModel @Inject constructor(
-    val languages: Languages, val calendar: Calendar, private val repository: TaskRepository
+    val languages: Languages,
+    val calendar: Calendar,
+    private val repository: TaskRepository,
+    constants: Repository
 ) : ViewModel() {
 
-    val task = Repository.selectTask.value
+    val task = constants.selectTask.value
 
     fun update(task: Task, context: Context, navController: NavController) {
         if (task.name.isEmpty()) {

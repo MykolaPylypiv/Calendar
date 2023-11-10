@@ -5,8 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
-import com.example.calendar.domain.Calendar
 import com.example.calendar.data.repository.Repository
+import com.example.calendar.domain.Calendar
 import com.example.calendar.domain.model.Month
 import com.example.calendar.domain.model.TextButtonParams
 import com.example.calendar.navigation.NavigationTree
@@ -14,19 +14,25 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class StartViewModel @Inject constructor(val calendar: Calendar) : ViewModel() {
+class StartViewModel @Inject constructor(val calendar: Calendar, private val constants: Repository) : ViewModel() {
     val year = mutableStateOf(calendar.year)
     val month = mutableStateOf(selectMonth(year = year.value, index = calendar.monthNumber - 1))
 
     val nameMonth = mutableStateOf(month.value.name)
 
-    val pointer = mutableIntStateOf(calendar.day.toInt() % 7 - calendar.dayOfWeek.toInt())
+    val pointer = mutableIntStateOf(7 + calendar.day.toInt() % 7 - calendar.dayOfWeek.toInt())
     val newCount = mutableIntStateOf(0)
 
     private var monthIndex = calendar.monthNumber - 1
     private var pointerNextMonth = 0
     private var preMonthDays = selectMonth(year = year.value, index = monthIndex - 1).days
     private var preMonthStartDays = preMonthDays - (6 - pointer.intValue)
+
+    fun nowDayClick(navController: NavController) {
+        if (monthIndex != calendar.monthNumber - 1 || year.value != calendar.year) {
+            navController.navigate(NavigationTree.Start.name)
+        }
+    }
 
     fun next() {
         if (monthIndex == 11) {
@@ -48,8 +54,8 @@ class StartViewModel @Inject constructor(val calendar: Calendar) : ViewModel() {
             changeMonth(11)
             preMonthDays = selectMonth(year = year.value, index = 0).days
         } else {
-            preMonthDays = selectMonth(year = year.value, index = monthIndex - 1).days
             changeMonth(-1)
+            preMonthDays = selectMonth(year = year.value, index = monthIndex - 1).days
         }
 
         val term = if (pointer.intValue + month.value.days > 35) 42 else 35
@@ -93,7 +99,7 @@ class StartViewModel @Inject constructor(val calendar: Calendar) : ViewModel() {
     fun dateClick(color: Color, text: String, navController: NavController) {
         if (color == Color.White) {
             navController.navigate(NavigationTree.Tasks.name)
-            Repository.selectDate.value = "${text}.${monthIndex + 1}.${year.value}"
+            constants.selectDate.value = "${text}.${monthIndex + 1}.${year.value}"
         }
     }
 

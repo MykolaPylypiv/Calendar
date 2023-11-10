@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.example.calendar.app.Languages
 import com.example.calendar.data.db.AppDatabase
 import com.example.calendar.data.db.room.TasksDao
+import com.example.calendar.data.repository.Repository
 import com.example.calendar.data.repository.TaskRepository
 import dagger.Module
 import dagger.Provides
@@ -38,5 +39,11 @@ object AppModule {
     @Provides
     fun provideLanguage(): Languages {
         return Languages.English()
+    }
+
+    @Provides
+    @Singleton
+    fun provideConst(): Repository {
+        return Repository
     }
 }

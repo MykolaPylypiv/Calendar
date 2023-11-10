@@ -46,7 +46,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.calendar.app.Languages
-import com.example.calendar.data.repository.Repository
 import com.example.calendar.domain.model.Task
 import com.example.calendar.navigation.NavigationTree
 import kotlinx.coroutines.launch
@@ -172,7 +171,7 @@ fun TaskItem(
                 .fillMaxHeight()
                 .clickable {
                     navController.navigate(NavigationTree.Edit.name)
-                    Repository.selectTask.value = task
+                    viewModel.constants.selectTask.value = task
                 }, verticalArrangement = Arrangement.Center
         ) {
             Spacer(modifier = Modifier.height(10.dp))

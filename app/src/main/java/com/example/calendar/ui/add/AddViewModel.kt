@@ -2,6 +2,7 @@ package com.example.calendar.ui.add
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -41,6 +42,25 @@ class AddViewModel @Inject constructor(
         date = "${calendar.day}.${calendar.monthNumber}.${calendar.year}"
     )
 
+    val stateDateDialog = mutableStateOf(false)
+    val stateDaysDialog = mutableStateOf(false)
+    val stateMonthsDialog = mutableStateOf(false)
+    val stateYearsDialog = mutableStateOf(false)
+
+    val stateTimeDialog = mutableStateOf(false)
+    val stateMinutesDialog = mutableStateOf(false)
+    val stateHourDialog = mutableStateOf(false)
+
+    val year = mutableIntStateOf(calendar.year.toInt())
+    val month = mutableIntStateOf(calendar.monthNumber)
+    val dayNumber = mutableIntStateOf(calendar.day.toInt())
+
+    val hour = mutableIntStateOf(calendar.hour.toInt())
+    val minute = mutableIntStateOf(calendar.minute.toInt())
+
+    val date = mutableStateOf("${calendar.day}.${calendar.monthNumber}.${calendar.year}")
+    val time = mutableStateOf("${calendar.hour}.${calendar.minute}")
+
     fun insert(task: Task, context: Context, navController: NavController) {
         if (task.name.isEmpty()) {
             Toast.makeText(
@@ -59,10 +79,6 @@ class AddViewModel @Inject constructor(
             Month(name = "February", days = 29)
         } else calendar.listOfMonth[index]
     }
-
-    val date = mutableStateOf("${calendar.day}.${calendar.monthNumber}.${calendar.year}")
-
-    val time = mutableStateOf("${calendar.hour}.${calendar.minute}")
 
     fun minuteUp(minute: Int): Int = if (minute >= 55) 0 else minute + 5
 
@@ -118,6 +134,6 @@ class AddViewModel @Inject constructor(
     }
 
     init {
-        acceptTime(hour = calendar.hour.toInt(),minute = calendar.minute.toInt())
+        acceptTime(hour = calendar.hour.toInt(), minute = calendar.minute.toInt())
     }
 }

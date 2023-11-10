@@ -96,4 +96,5 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:$hiltVersion")
 
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+
 }

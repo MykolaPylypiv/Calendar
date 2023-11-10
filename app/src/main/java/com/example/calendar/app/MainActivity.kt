@@ -2,10 +2,12 @@ package com.example.calendar.app
 
 import android.app.Activity
 import android.os.Bundle
+import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
@@ -28,12 +30,8 @@ class MainActivity : ComponentActivity() {
             val backgroundStatusBarColor = Color(0xff23405e)
 
             val view = LocalView.current
-            if (!view.isInEditMode) {
-                SideEffect {
-                    val window = (view.context as Activity).window
-                    window.statusBarColor = backgroundStatusBarColor.toArgb()
-                }
-            }
+
+            Background(view = view, color = backgroundStatusBarColor.toArgb())
 
             Box(
                 modifier = Modifier
@@ -45,6 +43,16 @@ class MainActivity : ComponentActivity() {
             ) {
                 ApplicationScreen()
             }
+        }
+    }
+}
+
+@Composable
+private fun Background(view: View, color: Int) {
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            window.statusBarColor = color
         }
     }
 }

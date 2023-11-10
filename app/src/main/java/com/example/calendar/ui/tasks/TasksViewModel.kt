@@ -18,7 +18,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TasksViewModel @Inject constructor(
-    val languages: Languages, private val repository: TaskRepository, private val calendar: Calendar
+    val languages: Languages,
+    val constants: Repository,
+    private val repository: TaskRepository,
+    private val calendar: Calendar
 ) : ViewModel() {
 
     private val _tasks = mutableStateOf<List<Task>>(emptyList())

@@ -50,7 +50,7 @@ fun StartScreen(navController: NavController, viewModel: StartViewModel) {
 
         Spacer(modifier = Modifier.weight(1F))
 
-        StartLowLayer(navController = navController, day = viewModel.calendar.day)
+        StartLowLayer(navController = navController, viewModel = viewModel, day = viewModel.calendar.day)
 
         Spacer(modifier = Modifier.height(8.dp))
     }
@@ -63,7 +63,7 @@ fun StartTopBody(viewModel: StartViewModel) {
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         val modifier = Modifier.weight(1F)
 
-        IconButton(onClick = { viewModel.back() }, modifier = modifier) {
+        IconButton(onClick = { viewModel.back() }, modifier = Modifier.weight(0.5F)) {
             Icon(
                 imageVector = Icons.Filled.KeyboardArrowLeft,
                 contentDescription = "Back",
@@ -79,7 +79,7 @@ fun StartTopBody(viewModel: StartViewModel) {
             textAlign = TextAlign.Center
         )
 
-        IconButton(onClick = { viewModel.next() }, modifier = modifier) {
+        IconButton(onClick = { viewModel.next() }, modifier = Modifier.weight(0.5F)) {
             Icon(
                 imageVector = Icons.Filled.KeyboardArrowRight,
                 contentDescription = "Next",
@@ -160,12 +160,14 @@ fun TableMonth(viewModel: StartViewModel, navController: NavController) {
 }
 
 @Composable
-fun StartLowLayer(navController: NavController, day: String) {
+fun StartLowLayer(navController: NavController, day: String, viewModel: StartViewModel) {
     Row {
         Spacer(modifier = Modifier.weight(1F))
 
         TextButton(
-            onClick = { navController.navigate(NavigationTree.Start.name) },
+            onClick = {
+                viewModel.nowDayClick(navController = navController)
+            },
             colors = ButtonDefaults.buttonColors(
                 contentColor = Color.White, containerColor = Color(0xff23405e).copy(0.85F)
             ),
