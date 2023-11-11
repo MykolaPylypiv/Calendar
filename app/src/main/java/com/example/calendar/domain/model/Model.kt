@@ -1,8 +1,19 @@
 package com.example.calendar.domain.model
 
+import androidx.compose.ui.graphics.Color
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+
+data class Month(
+    val name: String,
+    val days: Int
+)
+
+data class TextButtonParams(
+    val text: String,
+    val color: Color
+)
 
 @Entity(tableName = "task")
 data class Task(

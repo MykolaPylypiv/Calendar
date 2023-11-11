@@ -1,6 +1,5 @@
 package com.example.calendar.ui.start
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -11,7 +10,6 @@ import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.gestures.animateTo
-import androidx.compose.foundation.gestures.snapTo
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,7 +19,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -47,6 +44,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.calendar.domain.model.DragAnchors
 import com.example.calendar.navigation.NavigationTree
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -82,8 +80,6 @@ fun StartTopBody(viewModel: StartViewModel) {
     val color = Color.White
 
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        val modifier = Modifier.weight(1F)
-
         IconButton(onClick = { viewModel.back() }, modifier = Modifier.weight(0.5F)) {
             Icon(
                 imageVector = Icons.Filled.KeyboardArrowLeft,
@@ -96,7 +92,7 @@ fun StartTopBody(viewModel: StartViewModel) {
             text = viewModel.nameMonth.value + " " + viewModel.year.value,
             fontSize = 24.sp,
             color = color,
-            modifier = modifier,
+            modifier = Modifier.weight(1F),
             textAlign = TextAlign.Center
         )
 
@@ -136,18 +132,13 @@ fun TableMonth(viewModel: StartViewModel, navController: NavController) {
 
     val state = remember {
         AnchoredDraggableState(
-            // 2
             initialValue = DragAnchors.Center,
-            // 3
             positionalThreshold = { distance: Float -> distance * 0.5f },
-            // 4
             velocityThreshold = { with(density) { 200.dp.toPx() } },
-            // 5
             animationSpec = tween(easing = LinearEasing),
         ).apply {
-            // 6
             updateAnchors(
-                // 7
+
                 DraggableAnchors {
                     DragAnchors.Left at 400f
                     DragAnchors.Center at 0f
@@ -161,10 +152,6 @@ fun TableMonth(viewModel: StartViewModel, navController: NavController) {
     if (state.isAnimationRunning) {
         DisposableEffect(Unit) {
             onDispose {
-                scope.launch {
-                    state.animateTo(DragAnchors.Center)
-                }
-
                 when (state.currentValue) {
                     DragAnchors.Right -> {
                         viewModel.next()
@@ -178,6 +165,10 @@ fun TableMonth(viewModel: StartViewModel, navController: NavController) {
                         return@onDispose
                     }
                 }
+
+                scope.launch {
+                    state.animateTo(DragAnchors.Center)
+                }
             }
         }
     }
@@ -189,20 +180,16 @@ fun TableMonth(viewModel: StartViewModel, navController: NavController) {
             Row(modifier = Modifier
                 .fillMaxWidth()
                 .size(80.dp)
-                // 1
                 .offset {
                     IntOffset(
-                        // 2
                         x = state
                             .requireOffset()
                             .roundToInt(),
                         y = 0,
                     )
                 }
-                // 3
-                .anchoredDraggable(state, Orientation.Horizontal)
+                .anchoredDraggable(state, Orientation.Horizontal)) {
 
-            ) {
                 viewModel.calendar.daysWeek.forEach { day ->
                     val text = mutableStateOf("")
                     val textColor = mutableStateOf(Color.White)
@@ -286,8 +273,4 @@ fun StartLowLayer(navController: NavController, day: String, viewModel: StartVie
 
         Spacer(modifier = Modifier.width(16.dp))
     }
-}
-
-enum class DragAnchors(val fraction: Float) {
-    Left(0f), Center(0.5f), Right(1f),
 }

@@ -53,14 +53,13 @@ import kotlinx.coroutines.launch
 @Composable
 fun TasksScreen(navController: NavController, viewModel: TasksViewModel) {
     val languages = viewModel.languages
-    val dp = 12.dp
 
-    LazyColumn(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color.White.copy(0.2F))
     ) {
-        item {
+        Row(modifier = Modifier.fillMaxWidth()) {
             Spacer(modifier = Modifier.height(8.dp))
 
             TopBodyLayer(
@@ -70,51 +69,7 @@ fun TasksScreen(navController: NavController, viewModel: TasksViewModel) {
             Spacer(modifier = Modifier.height(8.dp))
         }
 
-        if (viewModel.tasks.value.isNotEmpty()) {
-            viewModel.tasks.value.forEach { task ->
-                item {
-                    Spacer(modifier = Modifier.height(dp))
-
-                    var visible by remember { mutableStateOf(false) }
-                    val density = LocalDensity.current
-
-                    AnimatedVisibility(visible = visible, enter = slideInVertically {
-                        with(density) { -40.dp.roundToPx() }
-                    } + expandVertically(
-                        expandFrom = Alignment.Top
-                    ) + fadeIn(
-                        initialAlpha = 0.3f
-                    ), exit = slideOutVertically() + shrinkVertically() + fadeOut()) {
-                        TaskItem(
-                            task = task, viewModel = viewModel, navController = navController
-                        )
-                    }
-
-                    visible = true
-                }
-            }
-        } else {
-            item {
-                Column(
-                    modifier = Modifier
-                        .height(500.dp)
-                        .fillMaxWidth(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Spacer(modifier = Modifier.weight(1F))
-
-                    Text(
-                        text = "Empty",
-                        color = Color.Black,
-                        fontSize = 30.sp,
-                        textAlign = TextAlign.Center
-                    )
-
-                    Spacer(modifier = Modifier.weight(1F))
-                }
-            }
-        }
+        TaskList(viewModel = viewModel, navController = navController)
     }
 }
 
@@ -141,6 +96,51 @@ fun TopBodyLayer(navController: NavController, languages: Languages, viewModel: 
             modifier = Modifier.padding(top = 16.dp),
             fontSize = 22.sp
         )
+    }
+}
+
+@Composable
+fun TaskList(viewModel: TasksViewModel, navController: NavController) {
+    val dp = 12.dp
+    val density = LocalDensity.current
+
+    if (viewModel.tasks.value.isNotEmpty()) {
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
+
+            viewModel.tasks.value.forEach { task ->
+                item {
+                    var visible by remember { mutableStateOf(false) }
+
+                    Spacer(modifier = Modifier.height(dp))
+
+                    AnimatedVisibility(visible = visible, enter = slideInVertically {
+                        with(density) { -40.dp.roundToPx() }
+                    } + expandVertically(
+                        expandFrom = Alignment.Top
+                    ) + fadeIn(
+                        initialAlpha = 0.3f
+                    ), exit = slideOutVertically() + shrinkVertically() + fadeOut()) {
+                        TaskItem(
+                            task = task, viewModel = viewModel, navController = navController
+                        )
+                    }
+
+                    visible = true
+                }
+            }
+        }
+    } else {
+        Column(
+            modifier = Modifier
+                .height(500.dp)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Empty", color = Color.Black, fontSize = 30.sp, textAlign = TextAlign.Center
+            )
+        }
     }
 }
 
@@ -188,7 +188,7 @@ fun TaskItem(
 
             Row(modifier = Modifier.weight(1F)) {
                 Text(
-                    text = task.time.replace(".", ":"),
+                    text = task.time,
                     fontSize = 20.sp,
                     color = Color.Black,
                     modifier = Modifier.weight(1F),

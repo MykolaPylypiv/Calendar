@@ -59,25 +59,28 @@ class TasksViewModel @Inject constructor(
             val dateList = Repository.selectDate.value.split(".")
 
             for (item in repository.tasks(date = Repository.selectDate.value)) {
-                item.time = item.time.replace(":", ".")
-
                 val taskDateList = item.date.split(".")
 
-                if (item.repeat == "One time" || item.repeat == "Every day") tasks.add(item)
-                else if (item.repeat == "Every year") {
-                    val selectDate = dateList[0] + dateList[1]
-                    val taskDate = taskDateList[0] + taskDateList[1]
+                when (item.repeat) {
+                    "One time", "Every day" -> tasks.add(item)
 
-                    if (selectDate == taskDate) tasks.add(item)
+                    "Every year" -> {
+                        val selectDate = dateList[0] + dateList[1]
+                        val taskDate = taskDateList[0] + taskDateList[1]
 
-                } else if (item.repeat == "Every month") {
-                    val selectDay = dateList[0]
-                    val taskDay = taskDateList[0]
+                        if (selectDate == taskDate) tasks.add(item)
+                    }
 
-                    if (selectDay == taskDay) tasks.add(item)
+                    "Every month" -> {
+                        val selectDay = dateList[0]
+                        val taskDay = taskDateList[0]
+
+                        if (selectDay == taskDay) tasks.add(item)
+                    }
                 }
             }
-            tasks.sortBy { it.time.toFloat() }
+
+            tasks.sortBy { it.time.replace(":", ".").toFloat() }
 
             _tasks.value = tasks
         }

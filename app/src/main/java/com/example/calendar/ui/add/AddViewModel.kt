@@ -59,7 +59,7 @@ class AddViewModel @Inject constructor(
     val minute = mutableIntStateOf(calendar.minute.toInt())
 
     val date = mutableStateOf("${calendar.day}.${calendar.monthNumber}.${calendar.year}")
-    val time = mutableStateOf("${calendar.hour}.${calendar.minute}")
+    val time = mutableStateOf("${calendar.hour}:${calendar.minute}")
 
     fun insert(task: Task, context: Context, navController: NavController) {
         if (task.name.isEmpty()) {
