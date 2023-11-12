@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -99,6 +100,7 @@ fun TopBodyLayer(navController: NavController, languages: Languages, viewModel: 
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TaskList(viewModel: TasksViewModel, navController: NavController) {
     val dp = 12.dp
@@ -121,7 +123,10 @@ fun TaskList(viewModel: TasksViewModel, navController: NavController) {
                         initialAlpha = 0.3f
                     ), exit = slideOutVertically() + shrinkVertically() + fadeOut()) {
                         TaskItem(
-                            task = task, viewModel = viewModel, navController = navController
+                            task = task,
+                            viewModel = viewModel,
+                            navController = navController,
+                            modifier = Modifier.animateItemPlacement()
                         )
                     }
 
@@ -146,7 +151,7 @@ fun TaskList(viewModel: TasksViewModel, navController: NavController) {
 
 @Composable
 fun TaskItem(
-    task: Task, viewModel: TasksViewModel, navController: NavController
+    task: Task, viewModel: TasksViewModel, navController: NavController, modifier: Modifier
 ) {
     val visibility = remember {
         Animatable(1f)
@@ -155,7 +160,7 @@ fun TaskItem(
     val scope = rememberCoroutineScope()
 
     Row(
-        modifier = Modifier
+        modifier = modifier
             .height(86.dp)
             .padding(start = 16.dp, end = 16.dp)
             .clip(CircleShape)

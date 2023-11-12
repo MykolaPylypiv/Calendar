@@ -2,6 +2,9 @@ package com.example.calendar.ui.add
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -28,10 +31,7 @@ class AddViewModel @Inject constructor(
     val minutes = listOf(0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55)
 
     val listRepeat = listOf(
-        languages.oneTime,
-        languages.everyDay,
-        languages.everyMonth,
-        languages.everyYear
+        languages.oneTime, languages.everyDay, languages.everyMonth, languages.everyYear
     )
 
     val months = calendar.listOfMonth
@@ -52,7 +52,7 @@ class AddViewModel @Inject constructor(
     val stateHourDialog = mutableStateOf(false)
 
     val year = mutableIntStateOf(calendar.year.toInt())
-    val month = mutableIntStateOf(calendar.monthNumber)
+    val month = mutableIntStateOf(calendar.monthNumber - 1)
     val dayNumber = mutableIntStateOf(calendar.day.toInt())
 
     val hour = mutableIntStateOf(calendar.hour.toInt())
@@ -60,6 +60,9 @@ class AddViewModel @Inject constructor(
 
     val date = mutableStateOf("${calendar.day}.${calendar.monthNumber}.${calendar.year}")
     val time = mutableStateOf("${calendar.hour}:${calendar.minute}")
+
+    fun icon(value: Boolean) =
+        if (value) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowRight
 
     fun insert(task: Task, context: Context, navController: NavController) {
         if (task.name.isEmpty()) {
@@ -120,13 +123,13 @@ class AddViewModel @Inject constructor(
 
         if (dayNumber < 10) date.value = "0${date.value}"
 
-        newTask.date = "${dayNumber}.${month}.${year}"
+        newTask.date = "${dayNumber}.${month + 1}.${year}"
     }
 
     fun acceptTime(hour: Int, minute: Int) {
         time.value = if (minute < 10) "${hour}:0${minute}" else "${hour}:${minute}"
 
-        if (minute < 10) {
+        if (hour < 10) {
             time.value = "0${time.value}"
         }
 

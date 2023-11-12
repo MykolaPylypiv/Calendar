@@ -1,5 +1,8 @@
 package com.example.calendar.ui
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
@@ -21,7 +24,15 @@ fun ApplicationScreen() {
 
     NavHost(navController = navController, startDestination = NavigationTree.Start.name) {
 
-        composable(NavigationTree.Start.name) {
+        composable(route = NavigationTree.Start.name, enterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(700)
+            )
+        }, exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = tween(700)
+            )
+        }) {
             val startViewModel = hiltViewModel<StartViewModel>()
             StartScreen(viewModel = startViewModel, navController = navController)
         }

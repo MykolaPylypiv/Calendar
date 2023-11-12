@@ -1,7 +1,15 @@
 package com.example.calendar.ui.start
 
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.tween
+import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -31,9 +39,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -80,7 +90,14 @@ fun StartTopBody(viewModel: StartViewModel) {
     val color = Color.White
 
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        IconButton(onClick = { viewModel.back() }, modifier = Modifier.weight(0.5F)) {
+        var visible by remember {
+            mutableStateOf(true)
+        }
+
+        IconButton(onClick = {
+            viewModel.back()
+            visible = !visible
+        }, modifier = Modifier.width(100.dp)) {
             Icon(
                 imageVector = Icons.Filled.KeyboardArrowLeft,
                 contentDescription = "Back",
@@ -88,15 +105,24 @@ fun StartTopBody(viewModel: StartViewModel) {
             )
         }
 
-        Text(
-            text = viewModel.nameMonth.value + " " + viewModel.year.value,
-            fontSize = 24.sp,
-            color = color,
-            modifier = Modifier.weight(1F),
-            textAlign = TextAlign.Center
-        )
+        AnimatedContent(
+            transitionSpec = {
+                (slideInVertically { height -> height } + fadeIn()).togetherWith(slideOutVertically { height -> -height } + fadeOut())
+            }, targetState = viewModel.nameMonth.value, label = ""
+        ) { targetCount ->
+            Text(
+                text = targetCount + " " + viewModel.year.value,
+                fontSize = 24.sp,
+                color = color,
+                modifier = Modifier.weight(1F),
+                textAlign = TextAlign.Center
+            )
+        }
 
-        IconButton(onClick = { viewModel.next() }, modifier = Modifier.weight(0.5F)) {
+        IconButton(onClick = {
+            viewModel.next()
+            visible = !visible
+        }, modifier = Modifier.width(100.dp)) {
             Icon(
                 imageVector = Icons.Filled.KeyboardArrowRight,
                 contentDescription = "Next",
@@ -135,14 +161,14 @@ fun TableMonth(viewModel: StartViewModel, navController: NavController) {
             initialValue = DragAnchors.Center,
             positionalThreshold = { distance: Float -> distance * 0.5f },
             velocityThreshold = { with(density) { 200.dp.toPx() } },
-            animationSpec = tween(easing = LinearEasing),
+            animationSpec = snap(),
         ).apply {
             updateAnchors(
 
                 DraggableAnchors {
-                    DragAnchors.Left at 400f
+                    DragAnchors.Left at 100f
                     DragAnchors.Center at 0f
-                    DragAnchors.Right at -400f
+                    DragAnchors.Right at -100f
                 })
         }
     }
@@ -173,64 +199,68 @@ fun TableMonth(viewModel: StartViewModel, navController: NavController) {
         }
     }
 
-    while (count < 7 - viewModel.pointer.intValue + viewModel.month.value.days) {
-        viewModel.newCount.intValue = 0
+    Column {
+        while (count < 7 - viewModel.pointer.intValue + viewModel.month.value.days) {
+            viewModel.newCount.intValue = 0
 
-        if (count != -6) {
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .size(80.dp)
-                .offset {
-                    IntOffset(
-                        x = state
-                            .requireOffset()
-                            .roundToInt(),
-                        y = 0,
-                    )
-                }
-                .anchoredDraggable(state, Orientation.Horizontal)) {
-
-                viewModel.calendar.daysWeek.forEach { day ->
-                    val text = mutableStateOf("")
-                    val textColor = mutableStateOf(Color.White)
-
-                    val modifier =
-                        if (viewModel.isToday(count = count, day = day)) Modifier
-                            .weight(1F)
-                            .clip(CircleShape)
-                            .height(58.dp)
-                            .background(Color(0xffff984f))
-                        else if (viewModel.isEmptyFirstRow(count = count)) Modifier.height(0.dp)
-                        else Modifier
-                            .weight(1F)
-                            .height(60.dp)
-
-                    val textButtonParams = viewModel.textTable(count = count, day = day)
-
-                    text.value = textButtonParams.text
-                    textColor.value = textButtonParams.color
-
-                    TextButton(
-                        onClick = {
-                            viewModel.dateClick(
-                                color = textColor.value,
-                                text = text.value,
-                                navController = navController
-                            )
-                        }, modifier = modifier
-                    ) {
-
-                        Text(
-                            text = text.value,
-                            fontSize = 20.sp,
-                            color = textColor.value,
-                            textAlign = TextAlign.Center
+            if (count != -6) {
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .size(80.dp)
+                    .offset {
+                        IntOffset(
+                            x = state
+                                .requireOffset()
+                                .roundToInt(),
+                            y = 0,
                         )
+                    }
+                    .anchoredDraggable(state, Orientation.Horizontal)) {
+
+                    viewModel.calendar.daysWeek.forEach { day ->
+                        val text = mutableStateOf("")
+                        val textColor = mutableStateOf(Color.White)
+
+                        val modifier = if (viewModel.isToday(count = count, day = day)) {
+                            Modifier
+                                .weight(1F)
+                                .clip(CircleShape)
+                                .height(58.dp)
+                                .background(Color(0xffff984f))
+                        } else if (viewModel.isEmptyFirstRow(count = count)) {
+                            Modifier.height(0.dp)
+                        } else {
+                            Modifier
+                                .weight(1F)
+                                .height(60.dp)
+                        }
+
+                        val textButtonParams = viewModel.textTable(count = count, day = day)
+
+                        text.value = textButtonParams.text
+                        textColor.value = textButtonParams.color
+
+                        TextButton(
+                            onClick = {
+                                viewModel.dateClick(
+                                    color = textColor.value,
+                                    text = text.value,
+                                    navController = navController
+                                )
+                            }, modifier = modifier
+                        ) {
+                            Text(
+                                text = text.value,
+                                fontSize = 20.sp,
+                                color = textColor.value,
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
                 }
             }
+            count += 7
         }
-        count += 7
     }
 }
 

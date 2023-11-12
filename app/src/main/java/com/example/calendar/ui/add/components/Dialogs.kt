@@ -3,18 +3,27 @@ package com.example.calendar.ui.add.components
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -33,302 +42,6 @@ import androidx.compose.ui.window.Dialog
 import com.example.calendar.app.Languages
 import com.example.calendar.ui.add.AddViewModel
 
-@OptIn(ExperimentalAnimationApi::class)
-@Composable
-fun StateDateDialog(languages: Languages, viewModel: AddViewModel) {
-    if (viewModel.stateDateDialog.value) {
-        Dialog(onDismissRequest = { viewModel.stateDateDialog.value = false }) {
-            Card {
-                Row(modifier = Modifier.fillMaxWidth()) {
-
-                    Column(
-                        modifier = Modifier.weight(0.7f),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Spacer(modifier = Modifier.height(15.dp))
-
-                        Text(
-                            text = languages.day,
-                            fontSize = 18.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-
-                        Spacer(modifier = Modifier.height(25.dp))
-
-                        IconButtonUp {
-                            viewModel.dayNumber.intValue = viewModel.dayNumberUp(
-                                dayNumber = viewModel.dayNumber.intValue,
-                                month = viewModel.month.intValue,
-                                year = viewModel.year.intValue
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        AnimatedContent(
-                            targetState = viewModel.dayNumber.intValue, label = ""
-                        ) { targetCount ->
-                            Text(
-                                text = targetCount.toString(),
-                                fontSize = 24.sp,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable { viewModel.stateDaysDialog.value = true },
-                                color = Color.Black,
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        IconButtonDown {
-                            viewModel.dayNumber.intValue = viewModel.dayNumberDown(
-                                dayNumber = viewModel.dayNumber.intValue,
-                                month = viewModel.month.intValue,
-                                year = viewModel.year.intValue
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(15.dp))
-                    }
-
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Spacer(modifier = Modifier.height(15.dp))
-
-                        Text(
-                            text = languages.month,
-                            fontSize = 18.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-
-                        Spacer(modifier = Modifier.height(25.dp))
-
-                        IconButtonUp {
-                            viewModel.month.intValue = viewModel.monthUp(viewModel.month.intValue)
-
-                            viewModel.dayNumber.intValue = viewModel.dayNumberOverflow(
-                                dayNumber = viewModel.dayNumber.intValue,
-                                month = viewModel.month.intValue,
-                                year = viewModel.year.intValue
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        AnimatedContent(
-                            targetState = viewModel.months[viewModel.month.intValue], label = ""
-                        ) { targetCount ->
-                            Text(
-                                text = targetCount.name,
-                                fontSize = 24.sp,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable { viewModel.stateMonthsDialog.value = true },
-                                color = Color.Black,
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        IconButtonDown {
-                            viewModel.month.intValue = viewModel.monthDown(viewModel.month.intValue)
-
-                            viewModel.dayNumber.intValue = viewModel.dayNumberOverflow(
-                                dayNumber = viewModel.dayNumber.intValue,
-                                month = viewModel.month.intValue,
-                                year = viewModel.year.intValue
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(15.dp))
-                    }
-
-                    Column(
-                        modifier = Modifier.weight(0.7f),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Spacer(modifier = Modifier.height(15.dp))
-
-                        Text(
-                            text = languages.year,
-                            fontSize = 18.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-
-                        Spacer(modifier = Modifier.height(25.dp))
-
-                        IconButtonUp {
-                            viewModel.year.intValue = viewModel.year.intValue + 1
-                        }
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        AnimatedContent(
-                            targetState = viewModel.year.intValue, label = ""
-                        ) { targetCount ->
-                            Text(
-                                text = targetCount.toString(),
-                                fontSize = 24.sp,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable { viewModel.stateYearsDialog.value = true },
-                                color = Color.Black,
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        IconButtonDown {
-                            viewModel.year.intValue = viewModel.yearDown(year = viewModel.year.intValue)
-                        }
-
-                        Spacer(modifier = Modifier.height(15.dp))
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(25.dp))
-
-                AcceptRow(languages = languages, onClick = {
-                    viewModel.acceptDate(
-                        dayNumber = viewModel.dayNumber.intValue, month = viewModel.month.intValue, year = viewModel.year.intValue
-                    )
-
-                    viewModel.stateDateDialog.value = false
-                })
-
-                Spacer(modifier = Modifier.height(4.dp))
-            }
-        }
-    }
-
-    StateDaysDialog(viewModel = viewModel)
-
-    StateMonthDialog(viewModel = viewModel)
-
-    StateYearsDialog(viewModel = viewModel)
-}
-
-@OptIn(ExperimentalAnimationApi::class)
-@Composable
-fun StateTimeDialog(viewModel: AddViewModel, languages: Languages, context: Context) {
-    if (viewModel.stateTimeDialog.value) {
-        Dialog(onDismissRequest = { viewModel.stateTimeDialog.value = false }) {
-            Card {
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    Spacer(modifier = Modifier.width(15.dp))
-
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Spacer(modifier = Modifier.height(15.dp))
-
-                        Text(
-                            text = languages.hour,
-                            fontSize = 18.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-
-                        Spacer(modifier = Modifier.height(25.dp))
-
-                        IconButtonUp {
-                            viewModel.hour.intValue = viewModel.hourUp(viewModel.hour.intValue)
-                        }
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        AnimatedContent(targetState = viewModel.hour.intValue, label = "") { targetCount ->
-                            Text(
-                                text = targetCount.toString(),
-                                fontSize = 24.sp,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable { viewModel.stateHourDialog.value = true },
-                                color = Color.Black,
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        IconButtonDown {
-                            viewModel.hour.intValue = viewModel.hourDown(viewModel.hour.intValue)
-                        }
-
-                        Spacer(modifier = Modifier.height(15.dp))
-                    }
-
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Spacer(modifier = Modifier.height(15.dp))
-
-                        Text(
-                            text = languages.minute,
-                            fontSize = 18.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-
-                        Spacer(modifier = Modifier.height(25.dp))
-
-                        IconButtonUp {
-                            viewModel.minute.intValue = viewModel.minuteUp(viewModel.minute.intValue)
-                        }
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        AnimatedContent(targetState = viewModel.minute.intValue, label = "") { targetCount ->
-                            Text(
-                                text = targetCount.toString(),
-                                fontSize = 24.sp,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable { viewModel.stateMinutesDialog.value = true },
-                                color = Color.Black,
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        IconButtonDown {
-                            viewModel.minute.intValue = viewModel.minuteDown(viewModel.minute.intValue)
-                        }
-
-                        Spacer(modifier = Modifier.height(15.dp))
-                    }
-
-                    Spacer(modifier = Modifier.width(15.dp))
-                }
-
-                Spacer(modifier = Modifier.height(25.dp))
-
-                AcceptRow(languages = languages, onClick = {
-                    viewModel.acceptTime(hour = viewModel.hour.intValue, minute = viewModel.minute.intValue)
-                    viewModel.stateTimeDialog.value = false
-                })
-
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-        }
-    }
-
-    StateHourDialog(viewModel = viewModel)
-
-    StateMinuteDialog(viewModel = viewModel, languages = languages, context = context)
-}
-
 @Composable
 fun StateDaysDialog(viewModel: AddViewModel) {
     if (viewModel.stateDaysDialog.value) {
@@ -344,7 +57,9 @@ fun StateDaysDialog(viewModel: AddViewModel) {
                         modifier = Modifier.background(Color.Gray.copy(0.2F)),
                         horizontalAlignment = Alignment.Start
                     ) {
-                        val daysInMonth = viewModel.selectMonth(viewModel.month.intValue, viewModel.year.intValue).days
+                        val daysInMonth = viewModel.selectMonth(
+                            viewModel.month.intValue, viewModel.year.intValue
+                        ).days
 
                         for (i in 1..daysInMonth) {
                             item {

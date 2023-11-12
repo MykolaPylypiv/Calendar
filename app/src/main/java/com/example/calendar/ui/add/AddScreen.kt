@@ -1,10 +1,15 @@
 package com.example.calendar.ui.add
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +24,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
@@ -42,7 +48,7 @@ import com.example.calendar.app.Languages
 import com.example.calendar.navigation.NavigationTree
 import com.example.calendar.ui.add.components.DescriptionTextField
 import com.example.calendar.ui.add.components.EventTextField
-import com.example.calendar.ui.add.components.SelectDate
+import com.example.calendar.ui.add.components.DateTitle
 import com.example.calendar.ui.add.components.SelectTime
 
 @Composable
@@ -51,61 +57,78 @@ fun AddScreen(navController: NavController, viewModel: AddViewModel) {
     val languages = viewModel.languages
     val borderColor = Color.DarkGray
 
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color.White.copy(0.2F)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TopBodyLayer(text = languages.addNewEvent,
-            onClick = { navController.navigate(NavigationTree.Start.name) })
+        item {
+            TopBodyLayer(text = languages.addNewEvent,
+                onClick = { navController.navigate(NavigationTree.Start.name) })
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
+        }
 
-        EventTextField(
-            context = context,
-            viewModel = viewModel,
-            languages = languages,
-            borderColor = borderColor
-        )
+        item {
+            EventTextField(
+                context = context,
+                viewModel = viewModel,
+                languages = languages,
+                borderColor = borderColor
+            )
 
-        Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(40.dp))
+        }
 
-        RepeatTime(viewModel = viewModel, languages = languages, borderColor = borderColor)
+        item {
+            RepeatTime(viewModel = viewModel, languages = languages, borderColor = borderColor)
 
-        Spacer(modifier = Modifier.height(35.dp))
+            Spacer(modifier = Modifier.height(35.dp))
+        }
 
-        SelectDate(viewModel = viewModel, languages = languages, borderColor = borderColor)
+        item {
+            DateTitle(viewModel = viewModel, languages = languages, borderColor = borderColor)
 
-        Spacer(modifier = Modifier.height(35.dp))
+            Spacer(modifier = Modifier.height(35.dp))
+        }
 
-        SelectTime(
-            context = context,
-            viewModel = viewModel,
-            languages = languages,
-            borderColor = borderColor
-        )
+        item {
+            SelectTime(
+                context = context,
+                viewModel = viewModel,
+                languages = languages,
+                borderColor = borderColor
+            )
 
-        Spacer(modifier = Modifier.height(35.dp))
+            Spacer(modifier = Modifier.height(35.dp))
 
-        DescriptionTextField(
-            context = context,
-            viewModel = viewModel,
-            languages = languages,
-            borderColor = borderColor
-        )
+        }
 
-        Spacer(modifier = Modifier.weight(1F))
+        item {
+            DescriptionTextField(
+                context = context,
+                viewModel = viewModel,
+                languages = languages,
+                borderColor = borderColor
+            )
+        }
 
-        AcceptButton(
-            onClick = {
-                viewModel.insert(
-                    task = viewModel.newTask, context = context, navController = navController
-                )
-            }, languages = languages
-        )
+        item {
+            Spacer(modifier = Modifier.height(125.dp))
+        }
 
-        Spacer(modifier = Modifier.height(10.dp))
+        item {
+            AcceptButton(
+                onClick = {
+                    viewModel.insert(
+                        task = viewModel.newTask, context = context, navController = navController
+                    )
+                }, languages = languages
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+        }
     }
 }
 
@@ -140,6 +163,7 @@ fun TopBodyLayer(text: String, onClick: () -> Unit) {
 fun RepeatTime(viewModel: AddViewModel, languages: Languages, borderColor: Color) {
     val stateDialog = remember { mutableStateOf(false) }
     val selectRepeat = remember { mutableStateOf(languages.oneTime) }
+    val icon = viewModel.icon(stateDialog.value)
 
     Row(
         modifier = Modifier
@@ -148,7 +172,9 @@ fun RepeatTime(viewModel: AddViewModel, languages: Languages, borderColor: Color
             .clip(CircleShape)
             .background(Color.Gray.copy(0.2F))
             .border(1.dp, borderColor, CircleShape)
-            .clickable { stateDialog.value = true }, verticalAlignment = Alignment.CenterVertically
+            .clickable { stateDialog.value = true },
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
     ) {
         Icon(
             imageVector = Icons.Filled.DateRange,
@@ -163,7 +189,7 @@ fun RepeatTime(viewModel: AddViewModel, languages: Languages, borderColor: Color
             color = Color.DarkGray,
             modifier = Modifier
                 .height(50.dp)
-                .padding(10.dp)
+                .padding(start = 10.dp, top = 14.dp)
         )
 
         Spacer(modifier = Modifier.weight(1F))
@@ -172,15 +198,21 @@ fun RepeatTime(viewModel: AddViewModel, languages: Languages, borderColor: Color
             text = selectRepeat.value,
             modifier = Modifier
                 .height(50.dp)
-                .padding(13.dp),
+                .padding(14.dp),
             color = Color.DarkGray
         )
 
-        Icon(
-            imageVector = Icons.Filled.KeyboardArrowRight,
-            contentDescription = "Open",
-            tint = Color.DarkGray
-        )
+        AnimatedContent(
+            transitionSpec = {
+                (slideInVertically { height -> height } + fadeIn()).togetherWith(slideOutVertically { height -> -height } + fadeOut())
+            }, targetState = icon, label = ""
+        ) { target ->
+            Icon(
+                imageVector = target,
+                contentDescription = "Open",
+                tint = Color.DarkGray
+            )
+        }
 
         Spacer(modifier = Modifier.width(8.dp))
     }
@@ -189,8 +221,8 @@ fun RepeatTime(viewModel: AddViewModel, languages: Languages, borderColor: Color
         Dialog(onDismissRequest = { stateDialog.value = false }) {
             LazyColumn(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(5))
-                    .background(Color.White)
+                    .clip(RoundedCornerShape(10))
+                    .background(Color.LightGray)
                     .fillMaxWidth()
                     .border(2.dp, Color.Gray),
                 verticalArrangement = Arrangement.Bottom

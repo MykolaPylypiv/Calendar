@@ -35,7 +35,11 @@ class MainActivity : ComponentActivity() {
 
             val view = LocalView.current
 
-            Background(view = view, background = backgroundStatusBarColor.toArgb(), navigation = navigationBarColor.toArgb())
+            Background(
+                view = view,
+                background = backgroundStatusBarColor.toArgb(),
+                navigation = navigationBarColor.toArgb()
+            )
 
             Box(
                 modifier = Modifier

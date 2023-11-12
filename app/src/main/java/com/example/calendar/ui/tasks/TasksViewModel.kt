@@ -2,6 +2,11 @@ package com.example.calendar.ui.tasks
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.TweenSpec
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -35,11 +40,11 @@ class TasksViewModel @Inject constructor(
         task: Task, visible: Animatable<Float, AnimationVector1D>
     ) {
         repository.delete(task)
-        visible.animateTo(targetValue = 0f, animationSpec = tween(400))
+        visible.animateTo(targetValue = 0f, animationSpec = TweenSpec(400, 0, FastOutSlowInEasing))
 
         loadTask()
 
-        visible.animateTo(targetValue = 1f, animationSpec = tween(10))
+        visible.animateTo(targetValue = 1f, animationSpec = TweenSpec(400, 0, FastOutSlowInEasing))
     }
 
     fun topBodyText(): String {

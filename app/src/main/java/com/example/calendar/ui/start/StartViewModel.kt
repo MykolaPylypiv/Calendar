@@ -4,17 +4,24 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.calendar.data.repository.Repository
+import com.example.calendar.data.repository.TaskRepository
 import com.example.calendar.domain.Calendar
 import com.example.calendar.domain.model.Month
 import com.example.calendar.domain.model.TextButtonParams
 import com.example.calendar.navigation.NavigationTree
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class StartViewModel @Inject constructor(val calendar: Calendar, private val constants: Repository) : ViewModel() {
+class StartViewModel @Inject constructor(
+    val calendar: Calendar,
+    private val constants: Repository
+) : ViewModel() {
     val year = mutableStateOf(calendar.year)
     val month = mutableStateOf(selectMonth(year = year.value, index = calendar.monthNumber - 1))
 
@@ -23,7 +30,7 @@ class StartViewModel @Inject constructor(val calendar: Calendar, private val con
     val pointer = mutableIntStateOf(7 + calendar.day.toInt() % 7 - calendar.dayOfWeek.toInt())
     val newCount = mutableIntStateOf(0)
 
-    private var monthIndex = calendar.monthNumber - 1
+    var monthIndex = calendar.monthNumber - 1
     private var pointerNextMonth = 0
     private var preMonthDays = selectMonth(year = year.value, index = monthIndex - 1).days
     private var preMonthStartDays = preMonthDays - (6 - pointer.intValue)
@@ -34,7 +41,7 @@ class StartViewModel @Inject constructor(val calendar: Calendar, private val con
         }
     }
 
-    fun textTable(count: Int, day:String): TextButtonParams {
+    fun textTable(count: Int, day: String): TextButtonParams {
         val days = month.value.days
         val dayNumber = calendar.daysWeek.indexOf(day)
 
@@ -77,9 +84,7 @@ class StartViewModel @Inject constructor(val calendar: Calendar, private val con
     fun isEmptyFirstRow(count: Int) = !(count in 1..month.value.days || count <= 0 && count != -6)
 
     fun isToday(count: Int, day: String): Boolean {
-        return (calendar.day.toInt() == count + calendar.daysWeek.indexOf(day) &&
-                monthIndex == calendar.monthNumber - 1 &&
-                calendar.year == year.value)
+        return (calendar.day.toInt() == count + calendar.daysWeek.indexOf(day) && monthIndex == calendar.monthNumber - 1 && calendar.year == year.value)
     }
 
     fun next() {
@@ -106,7 +111,7 @@ class StartViewModel @Inject constructor(val calendar: Calendar, private val con
         }
 
         val term = if (pointer.intValue + month.value.days > 35) 42 else 35
-        pointer.intValue = - (term - pointer.intValue - month.value.days - 7)
+        pointer.intValue = -(term - pointer.intValue - month.value.days - 7)
         preMonthStartDays = preMonthDays - 6 + pointer.intValue
     }
 
