@@ -1,4 +1,4 @@
-package com.example.calendar.app
+package com.example.calendar.ui.theme
 
 import javax.inject.Inject
 

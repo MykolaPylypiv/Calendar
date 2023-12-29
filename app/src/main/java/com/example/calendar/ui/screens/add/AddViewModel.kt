@@ -1,4 +1,4 @@
-package com.example.calendar.ui.add
+package com.example.calendar.ui.screens.add
 
 import android.content.Context
 import android.widget.Toast
@@ -10,12 +10,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import com.example.calendar.app.Languages
 import com.example.calendar.data.repository.TaskRepository
-import com.example.calendar.domain.Calendar
+import com.example.calendar.domain.DateTime
 import com.example.calendar.domain.model.Month
 import com.example.calendar.domain.model.Task
 import com.example.calendar.navigation.NavigationTree
+import com.example.calendar.ui.theme.Languages
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -23,7 +23,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddViewModel @Inject constructor(
-    val calendar: Calendar, val languages: Languages, private val repository: TaskRepository
+    val dateTime: DateTime, val languages: Languages, private val repository: TaskRepository
 ) : ViewModel() {
     val hours =
         listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23)
@@ -34,12 +34,12 @@ class AddViewModel @Inject constructor(
         languages.oneTime, languages.everyDay, languages.everyMonth, languages.everyYear
     )
 
-    val months = calendar.listOfMonth
+    val months = dateTime.listOfMonth
 
     val newTask = Task(
         repeat = languages.oneTime,
-        time = "${calendar.hour}:${calendar.minute}",
-        date = "${calendar.day}.${calendar.monthNumber}.${calendar.year}"
+        time = "${dateTime.hour}:${dateTime.minute}",
+        date = "${dateTime.day}.${dateTime.monthNumber}.${dateTime.year}"
     )
 
     val stateDateDialog = mutableStateOf(false)
@@ -51,15 +51,15 @@ class AddViewModel @Inject constructor(
     val stateMinutesDialog = mutableStateOf(false)
     val stateHourDialog = mutableStateOf(false)
 
-    val year = mutableIntStateOf(calendar.year.toInt())
-    val month = mutableIntStateOf(calendar.monthNumber - 1)
-    val dayNumber = mutableIntStateOf(calendar.day.toInt())
+    val year = mutableIntStateOf(dateTime.year.toInt())
+    val month = mutableIntStateOf(dateTime.monthNumber - 1)
+    val dayNumber = mutableIntStateOf(dateTime.day.toInt())
 
-    val hour = mutableIntStateOf(calendar.hour.toInt())
-    val minute = mutableIntStateOf(calendar.minute.toInt())
+    val hour = mutableIntStateOf(dateTime.hour.toInt())
+    val minute = mutableIntStateOf(dateTime.minute.toInt())
 
-    val date = mutableStateOf("${calendar.day}.${calendar.monthNumber}.${calendar.year}")
-    val time = mutableStateOf("${calendar.hour}:${calendar.minute}")
+    val date = mutableStateOf("${dateTime.day}.${dateTime.monthNumber}.${dateTime.year}")
+    val time = mutableStateOf("${dateTime.hour}:${dateTime.minute}")
 
     fun icon(value: Boolean) =
         if (value) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowRight
@@ -80,7 +80,7 @@ class AddViewModel @Inject constructor(
     fun selectMonth(index: Int, year: Int): Month {
         return if (year % 4 == 0 && index == 1) {
             Month(name = "February", days = 29)
-        } else calendar.listOfMonth[index]
+        } else dateTime.listOfMonth[index]
     }
 
     fun minuteUp(minute: Int): Int = if (minute >= 55) 0 else minute + 5
@@ -106,7 +106,7 @@ class AddViewModel @Inject constructor(
     fun monthDown(month: Int): Int = if (month == 0) 11 else month - 1
 
     fun yearDown(year: Int): Int {
-        val nowYear = calendar.year.toInt()
+        val nowYear = dateTime.year.toInt()
 
         return if (year == nowYear) nowYear else year - 1
     }
@@ -137,6 +137,6 @@ class AddViewModel @Inject constructor(
     }
 
     init {
-        acceptTime(hour = calendar.hour.toInt(), minute = calendar.minute.toInt())
+        acceptTime(hour = dateTime.hour.toInt(), minute = dateTime.minute.toInt())
     }
 }

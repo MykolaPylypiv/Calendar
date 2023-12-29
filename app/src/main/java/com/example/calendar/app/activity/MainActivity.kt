@@ -1,25 +1,21 @@
-package com.example.calendar.app
+package com.example.calendar.app.activity
 
-import android.app.Activity
 import android.os.Build
 import android.os.Bundle
-import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import com.example.calendar.R
-import com.example.calendar.ui.ApplicationScreen
+import com.example.calendar.ui.screens.ApplicationScreen
+import com.example.calendar.ui.theme.Colors
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -30,15 +26,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val imageBackground = R.drawable.atmosphere_gradient
-            val backgroundStatusBarColor = Color(0xff23405e)
-            val navigationBarColor = Color(0xffe25521)
 
             val view = LocalView.current
 
             Background(
                 view = view,
-                background = backgroundStatusBarColor.toArgb(),
-                navigation = navigationBarColor.toArgb()
+                background = Colors.backgroundStatusBarColor.toArgb(),
+                navigation = Colors.navigationBarColor.toArgb()
             )
 
             Box(
@@ -51,17 +45,6 @@ class MainActivity : ComponentActivity() {
             ) {
                 ApplicationScreen()
             }
-        }
-    }
-}
-
-@Composable
-private fun Background(view: View, background: Int, navigation: Int) {
-    if (!view.isInEditMode) {
-        SideEffect {
-            val window = (view.context as Activity).window
-            window.statusBarColor = background
-            window.navigationBarColor = navigation
         }
     }
 }

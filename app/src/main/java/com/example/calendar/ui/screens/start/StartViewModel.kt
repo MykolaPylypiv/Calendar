@@ -1,55 +1,47 @@
-package com.example.calendar.ui.start
+package com.example.calendar.ui.screens.start
 
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.calendar.data.repository.Repository
-import com.example.calendar.data.repository.TaskRepository
-import com.example.calendar.domain.Calendar
-import com.example.calendar.domain.model.Month
+import com.example.calendar.domain.DateTime
 import com.example.calendar.domain.model.TextButtonParams
 import com.example.calendar.navigation.NavigationTree
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class StartViewModel @Inject constructor(
-    val calendar: Calendar,
-    private val constants: Repository
+    val dateTime: DateTime, private val constants: Repository
 ) : ViewModel() {
-    val year = mutableStateOf(calendar.year)
-    val month = mutableStateOf(selectMonth(year = year.value, index = calendar.monthNumber - 1))
+    val visibleNowDayClick = mutableStateOf(false)
 
-    val nameMonth = mutableStateOf(month.value.name)
+    val year = mutableStateOf(dateTime.year)
+    val month = mutableStateOf(dateTime.month)
 
-    val pointer = mutableIntStateOf((7 + calendar.day.toInt() % 7 - calendar.dayOfWeek.toInt()) % 7)
+    val nameMonth = mutableStateOf(dateTime.month.name)
+
+    val firstDayOfWeek = mutableIntStateOf(initFirstDayOfWeek())
+
     val newCount = mutableIntStateOf(0)
 
-    private var monthIndex = calendar.monthNumber - 1
-    private var pointerNextMonth = 0
-    private var preMonthDays = selectMonth(year = year.value, index = monthIndex - 1).days
-    private var preMonthStartDays = preMonthDays - (6 - pointer.intValue)
+    private var monthIndex = dateTime.monthNumber - 1
+    private var nextMonthPointer = 0
+
+    private var previousMonthDays = dateTime.selectMonth(year = year.value, index = monthIndex - 1).days
+    private var previousMonthStartDays = previousMonthDays - (6 - firstDayOfWeek.intValue)
 
     fun nowDayClick(navController: NavController) {
-        if (monthIndex != calendar.monthNumber - 1 || year.value != calendar.year) {
+        if (monthIndex != dateTime.monthNumber - 1 || year.value != dateTime.year) {
             navController.navigate(NavigationTree.Start.name)
         }
     }
 
-    val visibleNowDayClick = mutableStateOf(false)
-
-    fun visibleNowDayClick() {
-        visibleNowDayClick.value = monthIndex != calendar.monthNumber - 1 || year.value != calendar.year
-    }
-
     fun textTable(count: Int, day: String): TextButtonParams {
         val days = month.value.days
-        val dayNumber = calendar.daysWeek.indexOf(day)
+        val dayNumber = dateTime.daysWeek.indexOf(day)
 
         var text = ""
         var color = Color.White
@@ -65,11 +57,11 @@ class StartViewModel @Inject constructor(
                 color = Color.LightGray
             }
 
-            pointerNextMonth = 7 - newCount.intValue
+            nextMonthPointer = 7 - newCount.intValue
         } else if (count <= 0 && count != -6) { // count < 0
 
-            if (preMonthStartDays + dayNumber <= preMonthDays) {
-                text = (preMonthStartDays + dayNumber).toString()
+            if (previousMonthStartDays + dayNumber <= previousMonthDays) {
+                text = (previousMonthStartDays + dayNumber).toString()
                 color = Color.LightGray
             } else {
                 text = (count + 7 - (7 - dayNumber)).toString()
@@ -90,46 +82,53 @@ class StartViewModel @Inject constructor(
     fun isEmptyFirstRow(count: Int) = !(count in 1..month.value.days || count <= 0 && count != -6)
 
     fun isToday(count: Int, day: String): Boolean {
-        return (calendar.day.toInt() == count + calendar.daysWeek.indexOf(day) && monthIndex == calendar.monthNumber - 1 && calendar.year == year.value)
+        return (dateTime.day.toInt() == count + dateTime.daysWeek.indexOf(day) && monthIndex == dateTime.monthNumber - 1 && dateTime.year == year.value)
     }
 
     fun next() {
         if (monthIndex == 11) {
             year.value = (year.value.toInt() + 1).toString()
             changeMonth(-11)
-            preMonthDays = selectMonth(year = year.value, index = 11).days
+            previousMonthDays = dateTime.selectMonth(year = year.value, index = 11).days
         } else {
             changeMonth(1)
-            preMonthDays = selectMonth(year = year.value, index = monthIndex - 1).days
+            previousMonthDays = dateTime.selectMonth(year = year.value, index = monthIndex - 1).days
         }
 
-        pointer.intValue = pointerNextMonth
-        preMonthStartDays = preMonthDays - (6 - pointer.intValue)
+        firstDayOfWeek.intValue = nextMonthPointer
+        previousMonthStartDays = previousMonthDays - (6 - firstDayOfWeek.intValue)
     }
 
     fun back() {
         if (monthIndex == 0) {
             year.value = (year.value.toInt() - 1).toString()
             changeMonth(11)
-            preMonthDays = selectMonth(year = year.value, index = 0).days
+            previousMonthDays = dateTime.selectMonth(year = year.value, index = 10).days
         } else {
             changeMonth(-1)
+            previousMonthDays = dateTime.selectMonth(year = year.value, index = monthIndex - 1).days
         }
 
-        val term = if (pointer.intValue + month.value.days > 35) 42 else 35
-        pointer.intValue = -(term - pointer.intValue - month.value.days - 7)
-        preMonthStartDays = preMonthDays - 6 + pointer.intValue
+        val term = if (firstDayOfWeek.intValue + month.value.days > 35) 42 else 35
+        firstDayOfWeek.intValue = -(term - firstDayOfWeek.intValue - month.value.days - 7)
+        previousMonthStartDays = previousMonthDays - 6 + firstDayOfWeek.intValue
+    }
+
+    private fun initFirstDayOfWeek() = if (dateTime.dayOfWeek == 1) {
+        dateTime.day.toInt() % 7 - dateTime.dayOfWeek
+    } else {
+        (dateTime.day.toInt() % 7 + 7 - dateTime.dayOfWeek) % 7
+    }
+
+    private fun visibleNowDayClick() {
+        visibleNowDayClick.value =
+            monthIndex != dateTime.monthNumber - 1 || year.value != dateTime.year
     }
 
     private fun changeMonth(index: Int) {
         monthIndex += index
-        month.value = selectMonth(year = year.value, index = monthIndex)
+        month.value = dateTime.selectMonth(year = year.value, index = monthIndex)
         nameMonth.value = month.value.name
-    }
-
-    private fun selectMonth(year: String, index: Int): Month {
-        return if (year.toInt() % 4 == 0 && index == 1) {
-            Month(name = "February", days = 29)
-        } else calendar.listOfMonth[index]
+        visibleNowDayClick()
     }
 }

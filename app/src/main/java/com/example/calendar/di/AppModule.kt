@@ -2,11 +2,11 @@ package com.example.calendar.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.calendar.app.Languages
 import com.example.calendar.data.db.AppDatabase
 import com.example.calendar.data.db.room.TasksDao
 import com.example.calendar.data.repository.Repository
 import com.example.calendar.data.repository.TaskRepository
+import com.example.calendar.ui.theme.Languages
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

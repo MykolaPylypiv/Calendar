@@ -1,4 +1,4 @@
-package com.example.calendar.ui.start
+package com.example.calendar.ui.screens.start
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -76,7 +76,7 @@ fun StartScreen(navController: NavController, viewModel: StartViewModel) {
         Spacer(modifier = Modifier.weight(1F))
 
         StartLowLayer(
-            navController = navController, viewModel = viewModel, day = viewModel.calendar.day
+            navController = navController, viewModel = viewModel, day = viewModel.dateTime.day
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -95,7 +95,6 @@ fun StartTopBody(viewModel: StartViewModel) {
         IconButton(onClick = {
             viewModel.back()
             visible = !visible
-            viewModel.visibleNowDayClick()
         }, modifier = Modifier.weight(1F)) {
             Icon(
                 imageVector = Icons.Filled.KeyboardArrowLeft,
@@ -121,7 +120,6 @@ fun StartTopBody(viewModel: StartViewModel) {
         IconButton(onClick = {
             viewModel.next()
             visible = !visible
-            viewModel.visibleNowDayClick()
         }, modifier = Modifier.weight(1F)) {
             Icon(
                 imageVector = Icons.Filled.KeyboardArrowRight,
@@ -137,7 +135,7 @@ fun WeekdayRow(viewModel: StartViewModel) {
     val color = Color.White
 
     Row(modifier = Modifier.fillMaxWidth()) {
-        viewModel.calendar.daysWeek.forEach { text ->
+        viewModel.dateTime.daysWeek.forEach { text ->
 
             Text(
                 text = text,
@@ -153,7 +151,7 @@ fun WeekdayRow(viewModel: StartViewModel) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TableMonth(viewModel: StartViewModel, navController: NavController) {
-    var count = -(6 - viewModel.pointer.intValue)
+    var count = -(6 - viewModel.firstDayOfWeek.intValue)
     val density = LocalDensity.current
 
     val state = remember {
@@ -200,7 +198,7 @@ fun TableMonth(viewModel: StartViewModel, navController: NavController) {
     }
 
     Column {
-        while (count < 7 - viewModel.pointer.intValue + viewModel.month.value.days) {
+        while (count < 7 - viewModel.firstDayOfWeek.intValue + viewModel.month.value.days) {
             viewModel.newCount.intValue = 0
 
             if (count != -6) {
@@ -217,7 +215,7 @@ fun TableMonth(viewModel: StartViewModel, navController: NavController) {
                     }
                     .anchoredDraggable(state, Orientation.Horizontal)) {
 
-                    viewModel.calendar.daysWeek.forEach { day ->
+                    viewModel.dateTime.daysWeek.forEach { day ->
                         val text = mutableStateOf("")
                         val textColor = mutableStateOf(Color.White)
 

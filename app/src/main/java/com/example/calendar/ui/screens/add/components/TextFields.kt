@@ -1,4 +1,4 @@
-package com.example.calendar.ui.add.components
+package com.example.calendar.ui.screens.add.components
 
 import android.content.Context
 import android.widget.Toast
@@ -23,8 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.example.calendar.app.Languages
-import com.example.calendar.ui.add.AddViewModel
+import com.example.calendar.ui.theme.Languages
+import com.example.calendar.ui.screens.add.AddViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

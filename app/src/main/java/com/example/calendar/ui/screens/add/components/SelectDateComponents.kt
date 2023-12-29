@@ -1,4 +1,4 @@
-package com.example.calendar.ui.add.components
+package com.example.calendar.ui.screens.add.components
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
@@ -33,7 +33,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.calendar.app.Languages
+import com.example.calendar.ui.theme.Languages
 
 @Composable
 fun IconButtonUp(onClick: () -> Unit) {

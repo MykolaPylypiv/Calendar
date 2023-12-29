@@ -1,4 +1,4 @@
-package com.example.calendar.ui.add
+package com.example.calendar.ui.screens.add
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
@@ -44,12 +44,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
-import com.example.calendar.app.Languages
 import com.example.calendar.navigation.NavigationTree
-import com.example.calendar.ui.add.components.DescriptionTextField
-import com.example.calendar.ui.add.components.EventTextField
-import com.example.calendar.ui.add.components.DateTitle
-import com.example.calendar.ui.add.components.SelectTime
+import com.example.calendar.ui.screens.add.components.DescriptionTextField
+import com.example.calendar.ui.screens.add.components.EventTextField
+import com.example.calendar.ui.screens.add.components.DateTitle
+import com.example.calendar.ui.screens.add.components.SelectTime
+import com.example.calendar.ui.theme.Languages
 
 @Composable
 fun AddScreen(navController: NavController, viewModel: AddViewModel) {

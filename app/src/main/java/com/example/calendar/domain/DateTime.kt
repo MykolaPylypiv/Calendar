@@ -6,7 +6,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import javax.inject.Inject
 
-class Calendar @Inject constructor() {
+// Клас для отримання та опрацювання дати та часу
+class DateTime @Inject constructor() {
     val daysWeek = listOf("Mo", "Tu", "We", "Th", "Fr", "Sa", "Su")
 
     val listOfMonth = listOf(
@@ -27,11 +28,18 @@ class Calendar @Inject constructor() {
     @SuppressLint("SimpleDateFormat")
     val nowDate = SimpleDateFormat("u/dd/M/yyyy/HH/mm").format(Date()).split("/")
 
-    val dayOfWeek = nowDate[0].toInt()
-    val day = nowDate[1]
-    val monthNumber = nowDate[2].toInt()
-    val year = nowDate[3]
+    val dayOfWeek: Int = nowDate[0].toInt()
+    val day: String = nowDate[1]
+    val monthNumber: Int = nowDate[2].toInt()
+    val year: String = nowDate[3]
 
-    val hour = nowDate[4]
-    val minute = nowDate[5]
+    val hour: String = nowDate[4]
+    val minute: String = nowDate[5]
+
+    val month: Month = selectMonth(year = year, index = monthNumber - 1)
+
+    // Повертає назву місяця і кількість днів
+    fun selectMonth(year: String, index: Int): Month = if (year.toInt() % 4 == 0 && index == 1) {
+        Month(name = "February", days = 29)
+    } else listOfMonth[index]
 }

@@ -1,29 +1,17 @@
-package com.example.calendar.ui.add.components
+package com.example.calendar.ui.screens.add.components
 
 import android.content.Context
 import android.widget.Toast
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandHorizontally
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkHorizontally
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -39,8 +27,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.example.calendar.app.Languages
-import com.example.calendar.ui.add.AddViewModel
+import com.example.calendar.ui.theme.Languages
+import com.example.calendar.ui.screens.add.AddViewModel
 
 @Composable
 fun StateDaysDialog(viewModel: AddViewModel) {
@@ -144,8 +132,8 @@ fun StateYearsDialog(viewModel: AddViewModel) {
                         modifier = Modifier.background(Color.Gray.copy(0.2F)),
                         horizontalAlignment = Alignment.Start
                     ) {
-                        val firstYear = viewModel.calendar.year.toInt()
-                        val lastYear = viewModel.calendar.year.toInt() + 30
+                        val firstYear = viewModel.dateTime.year.toInt()
+                        val lastYear = viewModel.dateTime.year.toInt() + 30
 
                         for (i in firstYear..lastYear) {
                             item {

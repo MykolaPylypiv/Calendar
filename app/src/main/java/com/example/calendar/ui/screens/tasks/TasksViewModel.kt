@@ -1,21 +1,17 @@
-package com.example.calendar.ui.tasks
+package com.example.calendar.ui.screens.tasks
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.TweenSpec
-import androidx.compose.animation.core.snap
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.calendar.app.Languages
-import com.example.calendar.data.repository.TaskRepository
+import com.example.calendar.ui.theme.Languages
 import com.example.calendar.data.repository.Repository
-import com.example.calendar.domain.Calendar
+import com.example.calendar.data.repository.TaskRepository
+import com.example.calendar.domain.DateTime
 import com.example.calendar.domain.model.Task
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -26,7 +22,7 @@ class TasksViewModel @Inject constructor(
     val languages: Languages,
     val constants: Repository,
     private val repository: TaskRepository,
-    private val calendar: Calendar
+    private val dateTime: DateTime
 ) : ViewModel() {
 
     private val _tasks = mutableStateOf<List<Task>>(emptyList())
@@ -51,7 +47,7 @@ class TasksViewModel @Inject constructor(
         val dateList = Repository.selectDate.value.split(".")
 
         val day = dateList[0]
-        val month = calendar.listOfMonth[dateList[1].toInt() - 1].name
+        val month = dateTime.listOfMonth[dateList[1].toInt() - 1].name
         val year = dateList[2]
 
         return "$day $month, $year"

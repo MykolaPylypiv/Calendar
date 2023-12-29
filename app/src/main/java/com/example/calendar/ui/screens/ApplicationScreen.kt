@@ -1,4 +1,4 @@
-package com.example.calendar.ui
+package com.example.calendar.ui.screens
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
@@ -9,14 +9,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.calendar.navigation.NavigationTree
-import com.example.calendar.ui.add.AddScreen
-import com.example.calendar.ui.add.AddViewModel
-import com.example.calendar.ui.edit.EditScreen
-import com.example.calendar.ui.edit.EditViewModel
-import com.example.calendar.ui.start.StartScreen
-import com.example.calendar.ui.start.StartViewModel
-import com.example.calendar.ui.tasks.TasksScreen
-import com.example.calendar.ui.tasks.TasksViewModel
+import com.example.calendar.ui.screens.add.AddScreen
+import com.example.calendar.ui.screens.add.AddViewModel
+import com.example.calendar.ui.screens.edit.EditScreen
+import com.example.calendar.ui.screens.edit.EditViewModel
+import com.example.calendar.ui.screens.start.StartScreen
+import com.example.calendar.ui.screens.start.StartViewModel
+import com.example.calendar.ui.screens.tasks.TasksScreen
+import com.example.calendar.ui.screens.tasks.TasksViewModel
 
 @Composable
 fun ApplicationScreen() {

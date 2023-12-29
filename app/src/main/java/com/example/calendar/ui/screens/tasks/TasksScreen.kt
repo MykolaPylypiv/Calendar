@@ -1,4 +1,4 @@
-package com.example.calendar.ui.tasks
+package com.example.calendar.ui.screens.tasks
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
@@ -46,9 +46,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.calendar.app.Languages
 import com.example.calendar.domain.model.Task
 import com.example.calendar.navigation.NavigationTree
+import com.example.calendar.ui.theme.Languages
 import kotlinx.coroutines.launch
 
 @Composable
