@@ -1,13 +1,11 @@
 package com.example.calendar.ui.start
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -97,7 +95,8 @@ fun StartTopBody(viewModel: StartViewModel) {
         IconButton(onClick = {
             viewModel.back()
             visible = !visible
-        }, modifier = Modifier.width(100.dp)) {
+            viewModel.visibleNowDayClick()
+        }, modifier = Modifier.weight(1F)) {
             Icon(
                 imageVector = Icons.Filled.KeyboardArrowLeft,
                 contentDescription = "Back",
@@ -122,7 +121,8 @@ fun StartTopBody(viewModel: StartViewModel) {
         IconButton(onClick = {
             viewModel.next()
             visible = !visible
-        }, modifier = Modifier.width(100.dp)) {
+            viewModel.visibleNowDayClick()
+        }, modifier = Modifier.weight(1F)) {
             Icon(
                 imageVector = Icons.Filled.KeyboardArrowRight,
                 contentDescription = "Next",
@@ -265,22 +265,28 @@ fun TableMonth(viewModel: StartViewModel, navController: NavController) {
 }
 
 @Composable
-fun StartLowLayer(navController: NavController, day: String, viewModel: StartViewModel) {
+fun StartLowLayer(
+    navController: NavController,
+    day: String,
+    viewModel: StartViewModel,
+) {
     Row {
         Spacer(modifier = Modifier.weight(1F))
 
-        TextButton(
-            onClick = {
-                viewModel.nowDayClick(navController = navController)
-            },
-            colors = ButtonDefaults.buttonColors(
-                contentColor = Color.White, containerColor = Color(0xff23405e).copy(0.85F)
-            ),
-            modifier = Modifier
-                .clip(CircleShape)
-                .size(68.dp),
-        ) {
-            Text(text = day, fontSize = 24.sp, maxLines = 1)
+        AnimatedVisibility(visible = viewModel.visibleNowDayClick.value) {
+            TextButton(
+                onClick = {
+                    viewModel.nowDayClick(navController = navController)
+                },
+                colors = ButtonDefaults.buttonColors(
+                    contentColor = Color.White, containerColor = Color(0xff23405e).copy(0.85F)
+                ),
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .size(68.dp),
+            ) {
+                Text(text = day, fontSize = 24.sp, maxLines = 1)
+            }
         }
 
         Spacer(modifier = Modifier.width(12.dp))

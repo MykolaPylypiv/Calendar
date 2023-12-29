@@ -27,10 +27,10 @@ class StartViewModel @Inject constructor(
 
     val nameMonth = mutableStateOf(month.value.name)
 
-    val pointer = mutableIntStateOf(7 + calendar.day.toInt() % 7 - calendar.dayOfWeek.toInt())
+    val pointer = mutableIntStateOf((7 + calendar.day.toInt() % 7 - calendar.dayOfWeek.toInt()) % 7)
     val newCount = mutableIntStateOf(0)
 
-    var monthIndex = calendar.monthNumber - 1
+    private var monthIndex = calendar.monthNumber - 1
     private var pointerNextMonth = 0
     private var preMonthDays = selectMonth(year = year.value, index = monthIndex - 1).days
     private var preMonthStartDays = preMonthDays - (6 - pointer.intValue)
@@ -39,6 +39,12 @@ class StartViewModel @Inject constructor(
         if (monthIndex != calendar.monthNumber - 1 || year.value != calendar.year) {
             navController.navigate(NavigationTree.Start.name)
         }
+    }
+
+    val visibleNowDayClick = mutableStateOf(false)
+
+    fun visibleNowDayClick() {
+        visibleNowDayClick.value = monthIndex != calendar.monthNumber - 1 || year.value != calendar.year
     }
 
     fun textTable(count: Int, day: String): TextButtonParams {
