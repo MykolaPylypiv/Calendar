@@ -57,6 +57,7 @@ import com.example.calendar.navigation.NavigationTree
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
+// Екран на якому знаходиться календар
 @Composable
 fun StartScreen(navController: NavController, viewModel: StartViewModel) {
     Column(modifier = Modifier.fillMaxSize()) {
@@ -151,7 +152,7 @@ fun WeekdayRow(viewModel: StartViewModel) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TableMonth(viewModel: StartViewModel, navController: NavController) {
-    var count = -(6 - viewModel.firstDayOfWeek.intValue)
+    var dayPointer = viewModel.dayPointer()
     val density = LocalDensity.current
 
     val state = remember {
@@ -198,10 +199,12 @@ fun TableMonth(viewModel: StartViewModel, navController: NavController) {
     }
 
     Column {
-        while (count < 7 - viewModel.firstDayOfWeek.intValue + viewModel.month.value.days) {
+
+        // Цикл для відображання на екрані кожного дня
+        while (dayPointer < 7 - viewModel.firstDayOfWeek.intValue + viewModel.month.value.days) {
             viewModel.newCount.intValue = 0
 
-            if (count != -6) {
+            if (dayPointer != -6) {
                 Row(modifier = Modifier
                     .fillMaxWidth()
                     .size(80.dp)
@@ -219,13 +222,13 @@ fun TableMonth(viewModel: StartViewModel, navController: NavController) {
                         val text = mutableStateOf("")
                         val textColor = mutableStateOf(Color.White)
 
-                        val modifier = if (viewModel.isToday(count = count, day = day)) {
+                        val modifier = if (viewModel.isToday(count = dayPointer, day = day)) {
                             Modifier
                                 .weight(1F)
                                 .clip(CircleShape)
                                 .height(58.dp)
                                 .background(Color(0xffff984f))
-                        } else if (viewModel.isEmptyFirstRow(count = count)) {
+                        } else if (viewModel.isEmptyFirstRow(count = dayPointer)) {
                             Modifier.height(0.dp)
                         } else {
                             Modifier
@@ -233,7 +236,7 @@ fun TableMonth(viewModel: StartViewModel, navController: NavController) {
                                 .height(60.dp)
                         }
 
-                        val textButtonParams = viewModel.textTable(count = count, day = day)
+                        val textButtonParams = viewModel.textTable(count = dayPointer, day = day)
 
                         text.value = textButtonParams.text
                         textColor.value = textButtonParams.color
@@ -257,7 +260,7 @@ fun TableMonth(viewModel: StartViewModel, navController: NavController) {
                     }
                 }
             }
-            count += 7
+            dayPointer += 7
         }
     }
 }

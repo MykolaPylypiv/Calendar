@@ -61,6 +61,10 @@ class AddViewModel @Inject constructor(
     val date = mutableStateOf("${dateTime.day}.${dateTime.monthNumber}.${dateTime.year}")
     val time = mutableStateOf("${dateTime.hour}:${dateTime.minute}")
 
+    init {
+        acceptTime(hour = dateTime.hour.toInt(), minute = dateTime.minute.toInt())
+    }
+
     fun icon(value: Boolean) =
         if (value) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowRight
 
@@ -134,9 +138,5 @@ class AddViewModel @Inject constructor(
         }
 
         newTask.time = time.value
-    }
-
-    init {
-        acceptTime(hour = dateTime.hour.toInt(), minute = dateTime.minute.toInt())
     }
 }
