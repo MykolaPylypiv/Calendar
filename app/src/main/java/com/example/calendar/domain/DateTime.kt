@@ -39,7 +39,8 @@ class DateTime @Inject constructor() {
     val month: Month = selectMonth(year = year, index = monthNumber - 1)
 
     // Повертає назву місяця і кількість днів
-    fun selectMonth(year: String, index: Int): Month = if (year.toInt() % 4 == 0 && index == 1) {
-        Month(name = "February", days = 29)
-    } else listOfMonth[index]
+    fun selectMonth(year: String, index: Int): Month =
+        if (year.toInt() % 4 == 0 && index == 1) Month(name = "February", days = 29)
+        else if (index == -1) listOfMonth[11]
+        else listOfMonth[index]
 }

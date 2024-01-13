@@ -1,5 +1,6 @@
 package com.example.calendar.ui.screens.start
 
+import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.snap
@@ -199,12 +200,14 @@ fun TableMonth(viewModel: StartViewModel, navController: NavController) {
     }
 
     Column {
+        viewModel.newCount = 0
 
         // Цикл для відображання на екрані кожного дня
         while (dayPointer < 7 - viewModel.firstDayOfWeek.intValue + viewModel.month.value.days) {
-            viewModel.newCount.intValue = 0
 
+            Log.v("TAG", viewModel.newCount.toString())
             if (dayPointer != -6) {
+
                 Row(modifier = Modifier
                     .fillMaxWidth()
                     .size(80.dp)

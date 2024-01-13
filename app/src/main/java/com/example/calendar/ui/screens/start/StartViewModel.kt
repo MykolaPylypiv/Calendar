@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StartViewModel @Inject constructor(
-    val dateTime: DateTime, private val constants: Repository
+    val dateTime: DateTime, private val constants: Repository,
 ) : ViewModel() {
     val visibleNowDayClick = mutableStateOf(false)
 
@@ -28,7 +28,7 @@ class StartViewModel @Inject constructor(
         else (dateTime.day.toInt() % 7 + 7 - dateTime.dayOfWeek) % 7
     )
 
-    val newCount = mutableIntStateOf(0)
+    var newCount = 0
 
     private var monthIndex = dateTime.monthNumber - 1
 
@@ -57,9 +57,11 @@ class StartViewModel @Inject constructor(
             if (count + dayNumber <= days) {
                 text = (count + dayNumber).toString()
                 color = Color.White
-                newCount.intValue += 1
-            } else {
-                text = (dayNumber - newCount.intValue + 1).toString()
+
+            } else if (count + dayNumber > days){
+                newCount ++
+
+                text = (newCount).toString()
                 color = Color.LightGray
             }
 
@@ -68,6 +70,7 @@ class StartViewModel @Inject constructor(
             if (previousMonthStartDays + dayNumber <= previousMonthDays) {
                 text = (previousMonthStartDays + dayNumber).toString()
                 color = Color.LightGray
+
             } else {
                 text = (count + 7 - (7 - dayNumber)).toString()
                 color = Color.White
@@ -99,7 +102,7 @@ class StartViewModel @Inject constructor(
             previousMonthDays = dateTime.selectMonth(year = year.value, index = monthIndex - 1).days
         }
 
-        firstDayOfWeek.intValue = 7 - newCount.intValue
+        firstDayOfWeek.intValue = newCount
         previousMonthStartDays = previousMonthDays - 6 + firstDayOfWeek.intValue
     }
 
