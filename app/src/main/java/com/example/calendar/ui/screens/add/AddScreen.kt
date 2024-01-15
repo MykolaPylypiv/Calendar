@@ -1,4 +1,4 @@
-package com.example.calendar.ui.screens.add
+    package com.example.calendar.ui.screens.add
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn

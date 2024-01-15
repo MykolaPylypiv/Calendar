@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.calendar.data.repository.TaskRepository
-import com.example.calendar.domain.DateTime
+import com.example.calendar.data.date.DateTime
 import com.example.calendar.data.repository.Repository
 import com.example.calendar.domain.model.Task
 import com.example.calendar.navigation.NavigationTree

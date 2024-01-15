@@ -1,13 +1,18 @@
 package com.example.calendar.ui.screens.start
 
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
+import com.example.calendar.data.date.DateTime
 import com.example.calendar.data.repository.Repository
-import com.example.calendar.domain.DateTime
-import com.example.calendar.domain.model.TextButtonParams
 import com.example.calendar.navigation.NavigationTree
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -16,28 +21,34 @@ import javax.inject.Inject
 class StartViewModel @Inject constructor(
     val dateTime: DateTime, private val constants: Repository,
 ) : ViewModel() {
+
     val visibleNowDayClick = mutableStateOf(false)
 
     val year = mutableStateOf(dateTime.year)
-    val month = mutableStateOf(dateTime.month)
-
     val nameMonth = mutableStateOf(dateTime.month.name)
 
-    val firstDayOfWeek = mutableIntStateOf(
-        if (dateTime.dayOfWeek == 1) dateTime.day.toInt() % 7 - dateTime.dayOfWeek
-        else (dateTime.day.toInt() % 7 + 7 - dateTime.dayOfWeek) % 7
-    )
+    val dates = mutableStateListOf<ItemDate>()
 
-    var newCount = 0
+    private var month = dateTime.month
+
+    private var firstDayOfWeek =
+        if (dateTime.dayOfWeek == 1) dateTime.day.toInt() % 7 + 7 - dateTime.dayOfWeek
+        else (dateTime.day.toInt() % 7 + 7 - dateTime.dayOfWeek) % 7
+
+    private var newCount = 0
 
     private var monthIndex = dateTime.monthNumber - 1
 
     private var previousMonthDays =
         dateTime.selectMonth(year = year.value, index = monthIndex - 1).days
 
-    private var previousMonthStartDays = previousMonthDays - (6 - firstDayOfWeek.intValue)
+    private var previousMonthStartDays = previousMonthDays - (6 - firstDayOfWeek)
 
-    fun dayPointer() = -(6 - firstDayOfWeek.intValue)
+    init {
+        textTable()
+    }
+
+    private fun dayPointer() = -(6 - firstDayOfWeek)
 
     fun nowDayClick(navController: NavController) {
         if (monthIndex != dateTime.monthNumber - 1 || year.value != dateTime.year) navController.navigate(
@@ -45,39 +56,65 @@ class StartViewModel @Inject constructor(
         )
     }
 
-    fun textTable(count: Int, day: String): TextButtonParams {
-        val days = month.value.days
-        val dayNumber = dateTime.daysWeek.indexOf(day)
+    private fun textTable() {
+        dates.clear()
+        newCount = 0
+        var dayPointer =  dayPointer()
 
-        var text = ""
-        var color = Color.White
+        while (dayPointer < 7 - firstDayOfWeek + month.days) {
 
-        if (count in 1..days) { // 0 < count < days
+                dateTime.daysWeek.forEach { day ->
 
-            if (count + dayNumber <= days) {
-                text = (count + dayNumber).toString()
-                color = Color.White
+                    val days = month.days
+                    val dayNumber = dateTime.daysWeek.indexOf(day)
 
-            } else if (count + dayNumber > days){
-                newCount ++
+                    var text = 0
+                    var color = Color.White
 
-                text = (newCount).toString()
-                color = Color.LightGray
+                    val modifier = if (isToday(count = dayPointer(), day = day)) {
+                        Modifier
+                            .clip(CircleShape)
+                            .height(58.dp)
+                            .background(Color(0xffff984f))
+                    } else if (isEmptyFirstRow(count = dayPointer())) {
+                        Modifier.height(0.dp)
+                    } else {
+                        Modifier
+                            .height(60.dp)
+                    }
+
+                    if (dayPointer in 0..days) { // 0 <= count <= days
+
+                        if (dayPointer + dayNumber <= days) {
+                            text = dayPointer + dayNumber
+                            color = Color.White
+
+                        } else if (dayPointer + dayNumber > days) {
+                            newCount++
+
+                            text = newCount
+                            color = Color.LightGray
+                        }
+                    } else if (dayPointer <= 0) { // count < 0
+
+                        if (previousMonthStartDays + dayNumber <= previousMonthDays) {
+                            text = previousMonthStartDays + dayNumber
+                            color = Color.LightGray
+
+                        } else {
+                            text = dayPointer + 7 - (7 - dayNumber)
+                            color = Color.White
+                        }
+                    }
+
+                    val finalText = if (text != 0) text.toString() else ""
+
+                    dates.add(ItemDate(
+                        date = finalText, color = color, modifier = modifier)
+                    )
             }
-
-        } else if (count <= 0 && count != -6) { // count < 0
-
-            if (previousMonthStartDays + dayNumber <= previousMonthDays) {
-                text = (previousMonthStartDays + dayNumber).toString()
-                color = Color.LightGray
-
-            } else {
-                text = (count + 7 - (7 - dayNumber)).toString()
-                color = Color.White
-            }
+            dayPointer += 7
         }
-
-        return TextButtonParams(text = text, color = color)
     }
 
     fun dateClick(color: Color, text: String, navController: NavController) {
@@ -87,9 +124,10 @@ class StartViewModel @Inject constructor(
         }
     }
 
-    fun isEmptyFirstRow(count: Int) = !(count in 1..month.value.days || count <= 0 && count != -6)
+    private fun isEmptyFirstRow(count: Int) =
+        !(count in 1..month.days || count <= 0 && count != -6)
 
-    fun isToday(count: Int, day: String): Boolean =
+    private fun isToday(count: Int, day: String): Boolean =
         dateTime.day.toInt() == count + dateTime.daysWeek.indexOf(day) && monthIndex == dateTime.monthNumber - 1 && dateTime.year == year.value
 
     fun next() {
@@ -99,11 +137,14 @@ class StartViewModel @Inject constructor(
             previousMonthDays = dateTime.selectMonth(year = year.value, index = 11).days
         } else {
             changeMonth(1)
-            previousMonthDays = dateTime.selectMonth(year = year.value, index = monthIndex - 1).days
+            previousMonthDays =
+                dateTime.selectMonth(year = year.value, index = monthIndex - 1).days
         }
 
-        firstDayOfWeek.intValue = newCount
-        previousMonthStartDays = previousMonthDays - 6 + firstDayOfWeek.intValue
+        firstDayOfWeek = if (newCount != 0) newCount else 7
+        previousMonthStartDays = previousMonthDays - 6 + firstDayOfWeek
+
+        textTable()
     }
 
     fun back() {
@@ -126,16 +167,24 @@ class StartViewModel @Inject constructor(
             }
         }
 
-        val term = if (firstDayOfWeek.intValue + month.value.days > 35) 42 else 35
-        firstDayOfWeek.intValue = -(term - firstDayOfWeek.intValue - month.value.days - 7)
-        previousMonthStartDays = previousMonthDays - 6 + firstDayOfWeek.intValue
+        val term = if (firstDayOfWeek + month.days > 35) 42 else 35
+        firstDayOfWeek = -(term - firstDayOfWeek - month.days - 7)
+        previousMonthStartDays = previousMonthDays - 6 + firstDayOfWeek
+
+        textTable()
     }
 
     private fun changeMonth(index: Int) {
         monthIndex += index
-        month.value = dateTime.selectMonth(year = year.value, index = monthIndex)
-        nameMonth.value = month.value.name
+        month = dateTime.selectMonth(year = year.value, index = monthIndex)
+        nameMonth.value = month.name
         visibleNowDayClick.value =
             monthIndex != dateTime.monthNumber - 1 || year.value != dateTime.year
     }
 }
+
+data class ItemDate(
+    val date: String,
+    val color: Color,
+    val modifier: Modifier
+)

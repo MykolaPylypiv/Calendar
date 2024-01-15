@@ -17,7 +17,9 @@ import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.gestures.animateTo
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,6 +28,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -39,6 +43,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -49,6 +54,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -153,7 +159,6 @@ fun WeekdayRow(viewModel: StartViewModel) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TableMonth(viewModel: StartViewModel, navController: NavController) {
-    var dayPointer = viewModel.dayPointer()
     val density = LocalDensity.current
 
     val state = remember {
@@ -199,71 +204,38 @@ fun TableMonth(viewModel: StartViewModel, navController: NavController) {
         }
     }
 
-    Column {
-        viewModel.newCount = 0
+    LazyVerticalGrid(columns = GridCells.Fixed(7),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier
+            .offset {
+                IntOffset(
+                    x = state
+                        .requireOffset()
+                        .roundToInt(),
+                    y = 0,
+                )
+            }
+            .anchoredDraggable(state, Orientation.Horizontal)) {
 
-        // Цикл для відображання на екрані кожного дня
-        while (dayPointer < 7 - viewModel.firstDayOfWeek.intValue + viewModel.month.value.days) {
-
-            Log.v("TAG", viewModel.newCount.toString())
-            if (dayPointer != -6) {
-
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .size(80.dp)
-                    .offset {
-                        IntOffset(
-                            x = state
-                                .requireOffset()
-                                .roundToInt(),
-                            y = 0,
+        viewModel.dates.forEach { item ->
+            item {
+                TextButton(
+                    onClick = {
+                        viewModel.dateClick(
+                            color = item.color,
+                            text = item.date.toString(),
+                            navController = navController
                         )
-                    }
-                    .anchoredDraggable(state, Orientation.Horizontal)) {
-
-                    viewModel.dateTime.daysWeek.forEach { day ->
-                        val text = mutableStateOf("")
-                        val textColor = mutableStateOf(Color.White)
-
-                        val modifier = if (viewModel.isToday(count = dayPointer, day = day)) {
-                            Modifier
-                                .weight(1F)
-                                .clip(CircleShape)
-                                .height(58.dp)
-                                .background(Color(0xffff984f))
-                        } else if (viewModel.isEmptyFirstRow(count = dayPointer)) {
-                            Modifier.height(0.dp)
-                        } else {
-                            Modifier
-                                .weight(1F)
-                                .height(60.dp)
-                        }
-
-                        val textButtonParams = viewModel.textTable(count = dayPointer, day = day)
-
-                        text.value = textButtonParams.text
-                        textColor.value = textButtonParams.color
-
-                        TextButton(
-                            onClick = {
-                                viewModel.dateClick(
-                                    color = textColor.value,
-                                    text = text.value,
-                                    navController = navController
-                                )
-                            }, modifier = modifier
-                        ) {
-                            Text(
-                                text = text.value,
-                                fontSize = 20.sp,
-                                color = textColor.value,
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                    }
+                    }, modifier = item.modifier
+                ) {
+                    Text(
+                        text = item.date.toString(),
+                        fontSize = 20.sp,
+                        color = item.color,
+                        textAlign = TextAlign.Center
+                    )
                 }
             }
-            dayPointer += 7
         }
     }
 }
