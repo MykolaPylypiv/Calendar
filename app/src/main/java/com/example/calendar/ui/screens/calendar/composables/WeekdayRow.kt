@@ -13,7 +13,7 @@ import com.example.calendar.ui.screens.calendar.CalendarViewModel
 @Composable
 fun WeekdayRow(viewModel: CalendarViewModel) {
     Row(modifier = Modifier.fillMaxWidth()) {
-        viewModel.daysWeek.forEach { text ->
+        viewModel.dateTime.daysWeek.forEach { text ->
 
             Text(
                 text = text,

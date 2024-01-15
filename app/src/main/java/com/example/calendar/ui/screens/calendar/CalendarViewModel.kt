@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CalendarViewModel @Inject constructor(
-    dateTime: DateTime, private val calendarTable: CalendarTable.Base
+    val dateTime: DateTime, private val calendarTable: CalendarTable.Base
 ) : ViewModel() {
 
     val visibleNowDayClick = mutableStateOf(calendarTable.visibleNowDayClick)
@@ -23,8 +23,6 @@ class CalendarViewModel @Inject constructor(
     val nameMonth = mutableStateOf(calendarTable.nameMonth)
 
     val dates = mutableStateListOf<UiDate>()
-
-    val daysWeek = dateTime.daysWeek
 
     init {
         dates.addAll(calendarTable.updateDatesList())
