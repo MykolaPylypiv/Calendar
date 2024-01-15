@@ -80,7 +80,7 @@ fun TopBodyLayer(navController: NavController, languages: Languages, viewModel: 
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier.background(Color.Transparent)
     ) {
-        IconButton(onClick = { navController.navigate(NavigationTree.Start.name) }) {
+        IconButton(onClick = { navController.navigate(NavigationTree.Calendar.name) }) {
             Icon(
                 imageVector = Icons.Filled.KeyboardArrowLeft,
                 contentDescription = "Back",
@@ -153,9 +153,7 @@ fun TaskList(viewModel: TasksViewModel, navController: NavController) {
 fun TaskItem(
     task: Task, viewModel: TasksViewModel, navController: NavController, modifier: Modifier
 ) {
-    val visibility = remember {
-        Animatable(1f)
-    }
+    val visibility = remember { Animatable(1f) }
 
     val scope = rememberCoroutineScope()
 

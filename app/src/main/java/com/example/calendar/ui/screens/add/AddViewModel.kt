@@ -74,7 +74,7 @@ class AddViewModel @Inject constructor(
                 context, languages.toastEnterName, Toast.LENGTH_SHORT
             ).show()
         } else {
-            navController.navigate(NavigationTree.Start.name)
+            navController.navigate(NavigationTree.Calendar.name)
             viewModelScope.launch(Dispatchers.IO) {
                 repository.insert(task)
             }

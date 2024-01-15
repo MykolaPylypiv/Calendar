@@ -24,9 +24,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -65,7 +63,7 @@ fun AddScreen(navController: NavController, viewModel: AddViewModel) {
     ) {
         item {
             TopBodyLayer(text = languages.addNewEvent,
-                onClick = { navController.navigate(NavigationTree.Start.name) })
+                onClick = { navController.navigate(NavigationTree.Calendar.name) })
 
             Spacer(modifier = Modifier.height(16.dp))
         }

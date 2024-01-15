@@ -1,5 +1,6 @@
 package com.example.calendar.domain.model
 
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -9,8 +10,10 @@ data class Month(
     val name: String, val days: Int
 )
 
-data class TextButtonParams(
-    val text: String, val color: Color
+data class UiDate(
+    val date: String,
+    val color: Color,
+    val modifier: Modifier
 )
 
 @Entity(tableName = "task")

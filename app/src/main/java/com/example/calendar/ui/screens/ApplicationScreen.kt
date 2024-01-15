@@ -1,14 +1,6 @@
 package com.example.calendar.ui.screens
 
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.core.VisibilityThreshold
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.unit.IntOffset
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -18,8 +10,8 @@ import com.example.calendar.ui.screens.add.AddScreen
 import com.example.calendar.ui.screens.add.AddViewModel
 import com.example.calendar.ui.screens.edit.EditScreen
 import com.example.calendar.ui.screens.edit.EditViewModel
-import com.example.calendar.ui.screens.start.StartScreen
-import com.example.calendar.ui.screens.start.StartViewModel
+import com.example.calendar.ui.screens.calendar.CalendarScreen
+import com.example.calendar.ui.screens.calendar.CalendarViewModel
 import com.example.calendar.ui.screens.tasks.TasksScreen
 import com.example.calendar.ui.screens.tasks.TasksViewModel
 
@@ -27,11 +19,11 @@ import com.example.calendar.ui.screens.tasks.TasksViewModel
 fun ApplicationScreen() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = NavigationTree.Start.name) {
+    NavHost(navController = navController, startDestination = NavigationTree.Calendar.name) {
 
-        composable(route = NavigationTree.Start.name) {
-            val startViewModel = hiltViewModel<StartViewModel>()
-            StartScreen(viewModel = startViewModel, navController = navController)
+        composable(route = NavigationTree.Calendar.name) {
+            val calendarViewModel = hiltViewModel<CalendarViewModel>()
+            CalendarScreen(viewModel = calendarViewModel, navController = navController)
         }
         composable(NavigationTree.Tasks.name) {
             val tasksViewModel = hiltViewModel<TasksViewModel>()
